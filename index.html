@@ -1624,7 +1624,7 @@
             
             // Update API key label
             const apiKeyLabel = document.getElementById('apiKeyLabel');
-            apiKeyLabel.textContent = provider === 'openai' ? 'OpenAI API Key' : 'Google Gemini API Key';
+            apiKeyLabel.textContent = t('apiKeyLabel', {provider: provider === 'openai' ? 'OpenAI' : 'Google Gemini'});
             
             // Update model tier options
             updateModelTierOptions();
@@ -1660,14 +1660,14 @@
             
             const modelDescriptions = {
                 openai: {
-                    nano: 'Fast, cost-effective analysis using gpt-4.1-nano',
-                    mini: 'Balanced performance using o4-mini',
-                    standard: 'Most comprehensive analysis using gpt-4.1'
+                    nano: t('nanoTier', {tierName: 'Nano'}) + ' - gpt-4.1-nano',
+                    mini: t('miniTier', {tierName: 'Mini'}) + ' - o4-mini',
+                    standard: t('standardTier', {tierName: 'Standard'}) + ' - gpt-4.1'
                 },
                 google: {
-                    nano: 'Fast, cost-effective analysis using gemini-1.5-flash-8b',
-                    mini: 'Balanced performance using gemini-1.5-flash',
-                    standard: 'Most comprehensive analysis using gemini-1.5-pro'
+                    nano: t('nanoTier', {tierName: 'Lite'}) + ' - gemini-1.5-flash-8b',
+                    mini: t('miniTier', {tierName: 'Flash'}) + ' - gemini-1.5-flash',
+                    standard: t('standardTier', {tierName: 'Pro'}) + ' - gemini-1.5-pro'
                 }
             };
             
