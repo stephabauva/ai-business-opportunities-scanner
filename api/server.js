@@ -346,6 +346,21 @@ const processAIResponse = (responseText, provider, model, language = 'en') => {
       if (!opp.title || !opp.description || !opp.impact || !opp.effort || !opp.priority) {
         throw new Error(`Invalid opportunity structure at index ${index}`);
       }
+      
+      // Debug logging for impact/effort values
+      console.log(`Opportunity ${index + 1}: Impact='${opp.impact}', Effort='${opp.effort}'`);
+
+      // Normalize French values to English for CSS classes
+      const normalizeValue = (value) => {
+        const normalized = value.toLowerCase();
+        if (normalized === 'élevé' || normalized === 'high') return 'High';
+        if (normalized === 'moyen' || normalized === 'medium') return 'Medium';
+        if (normalized === 'faible' || normalized === 'low') return 'Low';
+        return value; // Return original if no match
+      };
+
+      const normalizedImpact = normalizeValue(opp.impact);
+      const normalizedEffort = normalizeValue(opp.effort);
 
       // Validate impact and effort values (support both English and French)
       const validImpactEffort = ['High', 'Medium', 'Low', 'Élevé', 'Moyen', 'Faible'];
@@ -366,8 +381,8 @@ const processAIResponse = (responseText, provider, model, language = 'en') => {
       const result = {
         title: opp.title.trim(),
         description: opp.description.trim(),
-        impact: opp.impact,
-        effort: opp.effort,
+        impact: normalizedImpact,
+        effort: normalizedEffort,
         priority: priority,
         businessCase: opp.businessCase || {},
         implementation: opp.implementation || {},
@@ -938,12 +953,19 @@ const generatePDF = (analysisData, companyDescription, language = 'en') => {
       doc.end();
       
       doc.on('end', () => {
+        console.log('PDF generation completed:', filepath);
         // Store the PDF path in memory for download
         pdfStore.set(analysisData.id, filepath);
         resolve(filepath);
       });
       
+      doc.on('error', (error) => {
+        console.error('PDF generation error:', error);
+        reject(error);
+      });
+      
     } catch (error) {
+      console.error('PDF generation catch error:', error);
       reject(error);
     }
   });
@@ -1008,7 +1030,9 @@ app.post('/api/analyze', upload.single('file'), async (req, res) => {
     const analysis = processAIResponse(aiResponse, provider, model, language);
     
     // Generate PDF report
+    console.log('Starting PDF generation for analysis:', analysis.id);
     await generatePDF(analysis, content, language);
+    console.log('PDF generation completed for analysis:', analysis.id);
     
     res.json(analysis);
 
@@ -1043,18 +1067,23 @@ app.post('/api/analyze', upload.single('file'), async (req, res) => {
 app.get('/api/download/:id', (req, res) => {
   try {
     const { id } = req.params;
+    console.log('Download request for ID:', id);
+    console.log('PDFs in store:', Array.from(pdfStore.keys()));
     
     // Check if PDF exists in store
     if (!pdfStore.has(id)) {
+      console.log('PDF not found in store for ID:', id);
       return res.status(404).json({ 
         error: 'PDF not found or expired' 
       });
     }
 
     const pdfPath = pdfStore.get(id);
+    console.log('PDF path:', pdfPath);
     
     // Check if file exists
     if (!fs.existsSync(pdfPath)) {
+      console.log('PDF file does not exist:', pdfPath);
       pdfStore.delete(id);
       return res.status(404).json({ 
         error: 'PDF file not found' 
@@ -1067,7 +1096,10 @@ app.get('/api/download/:id', (req, res) => {
     
     // Send file and clean up
     res.sendFile(pdfPath, (err) => {
-      if (!err) {
+      if (err) {
+        console.error('SendFile error:', err);
+      } else {
+        console.log('PDF sent successfully, cleaning up...');
         // Clean up file after successful download
         fs.unlinkSync(pdfPath);
         pdfStore.delete(id);
