@@ -951,7 +951,7 @@ const generatePDF = (analysisData, companyDescription, language = 'en') => {
 
 // Routes
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '../public/index.html'));
+  res.sendFile(path.join(__dirname, '../index.html'));
 });
 
 app.post('/api/analyze', upload.single('file'), async (req, res) => {
