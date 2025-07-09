@@ -62,6 +62,22 @@ No environment setup required! The application prompts users to input their API 
 
 API keys are sent securely with each request and are not stored on the server.
 
+**How to Get Your API Keys:**
+
+**For OpenAI:**
+1. Visit [OpenAI Platform](https://platform.openai.com/) and sign in
+2. Click on your profile icon → "API Keys"
+3. Click "Create new secret key" and give it a name
+4. Copy the generated key immediately (you won't see it again!)
+
+**For Google Gemini:**
+1. Visit [Google AI Studio](https://aistudio.google.com/prompts/new_chat) and sign in
+2. Click "Get API Key" in the top right corner
+3. Select "Create API key in new project" or choose existing project
+4. Copy the generated key for use in the application
+
+💡 **Tip**: Click the "How to get API key" link next to the API key field in the app for step-by-step instructions!
+
 ### 📊 Model Mapping
 
 | Tier | OpenAI Model | Google Gemini Model |
@@ -181,6 +197,22 @@ Aucune configuration d'environnement requise ! L'application demande aux utilisa
 - Clé API Google Gemini (pour les modèles Gemini)
 
 Les clés API sont envoyées de manière sécurisée avec chaque requête et ne sont pas stockées sur le serveur.
+
+**Comment obtenir vos clés API :**
+
+**Pour OpenAI :**
+1. Visitez [OpenAI Platform](https://platform.openai.com/) et connectez-vous
+2. Cliquez sur votre icône de profil → "API Keys"
+3. Cliquez sur "Create new secret key" et donnez-lui un nom
+4. Copiez la clé générée immédiatement (vous ne la verrez plus !)
+
+**Pour Google Gemini :**
+1. Visitez [Google AI Studio](https://aistudio.google.com/prompts/new_chat) et connectez-vous
+2. Cliquez sur "Get API Key" dans le coin supérieur droit
+3. Sélectionnez "Create API key in new project" ou choisissez un projet existant
+4. Copiez la clé générée pour l'utiliser dans l'application
+
+💡 **Astuce** : Cliquez sur le lien "Comment obtenir la clé API" à côté du champ clé API dans l'app pour des instructions étape par étape !
 
 ### 📊 Mapping des Modèles
 

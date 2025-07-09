@@ -1277,6 +1277,157 @@
         .results-container {
             contain: layout style paint;
         }
+        
+        /* Help text styles */
+        .help-text {
+            color: var(--deep-purple);
+            cursor: pointer;
+            font-size: 0.9em;
+            margin-left: 10px;
+            text-decoration: underline;
+            transition: var(--transition-smooth);
+        }
+        
+        .help-text:hover {
+            color: var(--medium-gray);
+        }
+        
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        .modal-content {
+            background-color: var(--white);
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 600px;
+            position: relative;
+            animation: slideIn 0.3s ease-out;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--soft-lavender);
+        }
+        
+        .modal-title {
+            font-size: 1.5em;
+            font-weight: 600;
+            color: var(--deep-purple);
+            margin: 0;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--medium-gray);
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: var(--transition-smooth);
+        }
+        
+        .close-btn:hover {
+            background-color: var(--soft-lavender);
+            color: var(--deep-purple);
+        }
+        
+        .modal-body {
+            line-height: 1.6;
+            color: var(--charcoal);
+        }
+        
+        .step {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: var(--light-gray);
+            border-radius: 8px;
+            border-left: 4px solid var(--deep-purple);
+        }
+        
+        .step h4 {
+            color: var(--deep-purple);
+            margin: 0 0 10px 0;
+            font-size: 1.1em;
+        }
+        
+        .step p {
+            margin: 0;
+            color: var(--medium-gray);
+        }
+        
+        .step a {
+            color: var(--deep-purple);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .step a:hover {
+            text-decoration: underline;
+        }
+        
+        .provider-switch {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            background: var(--light-gray);
+            border-radius: 8px;
+            padding: 4px;
+        }
+        
+        .provider-switch button {
+            flex: 1;
+            padding: 8px 16px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: var(--transition-smooth);
+            font-weight: 600;
+        }
+        
+        .provider-switch button.active {
+            background: var(--deep-purple);
+            color: white;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideIn {
+            from { 
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
     </style>
 </head>
 <body>
@@ -1322,6 +1473,7 @@
 
                 <div class="form-group">
                     <label for="apiKey" id="apiKeyLabel" data-i18n="apiKeyLabel" data-i18n-params='{"provider":"OpenAI"}'>OpenAI API Key</label>
+                    <span class="help-text" onclick="openApiKeyModal()" data-i18n="helpText">How to get API key</span>
                     <div class="input-container">
                         <input type="password" class="input-field" id="apiKey" name="apiKey" data-i18n="apiKeyPlaceholder" placeholder="Enter your API key" required autocomplete="new-password" data-form-type="other" data-lpignore="true">
                     </div>
@@ -1408,6 +1560,60 @@
         </div>
     </div>
 
+    <!-- API Key Help Modal -->
+    <div id="apiKeyModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" data-i18n="apiKeyHelp">How to Get Your API Key</h2>
+                <button class="close-btn" onclick="closeApiKeyModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="provider-switch">
+                    <button id="googleInstructions" class="active" onclick="showInstructions('google')">Google (Free)</button>
+                    <button id="openaiInstructions" onclick="showInstructions('openai')">OpenAI</button>
+                </div>
+                
+                <div id="googleSteps" class="instructions">
+                    <div class="step">
+                        <h4 data-i18n="step1Google">1. Visit Google AI Studio</h4>
+                        <p data-i18n="step1GoogleDescription">Go to <a href="https://aistudio.google.com/prompts/new_chat" target="_blank">Google AI Studio</a> and sign in with your Google account</p>
+                    </div>
+                    <div class="step">
+                        <h4 data-i18n="step2Google">2. Access API Settings</h4>
+                        <p data-i18n="step2GoogleDescription">Click on "Get API Key" button in the top right corner of the interface</p>
+                    </div>
+                    <div class="step">
+                        <h4 data-i18n="step3Google">3. Create API Key</h4>
+                        <p data-i18n="step3GoogleDescription">Select "Create API key in new project" or choose an existing project</p>
+                    </div>
+                    <div class="step">
+                        <h4 data-i18n="step4Google">4. Copy Your Key</h4>
+                        <p data-i18n="step4GoogleDescription">Copy the generated API key and store it securely for use in this application</p>
+                    </div>
+                </div>
+                
+                <div id="openaiSteps" class="instructions" style="display: none;">
+                    <div class="step">
+                        <h4 data-i18n="step1">1. Visit OpenAI Platform</h4>
+                        <p data-i18n="step1Description">Go to <a href="https://platform.openai.com/" target="_blank">OpenAI Platform</a> and sign in with your account</p>
+                    </div>
+                    <div class="step">
+                        <h4 data-i18n="step2">2. Navigate to API Keys</h4>
+                        <p data-i18n="step2Description">Click on your profile icon in the top right, then select "API Keys" from the dropdown menu</p>
+                    </div>
+                    <div class="step">
+                        <h4 data-i18n="step3">3. Create New API Key</h4>
+                        <p data-i18n="step3Description">Click "Create new secret key" button and give your key a descriptive name</p>
+                    </div>
+                    <div class="step">
+                        <h4 data-i18n="step4">4. Copy Your Key</h4>
+                        <p data-i18n="step4Description">Copy the generated API key immediately and store it securely - you won't be able to see it again!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         let currentProvider = 'openai';
         let analysisId = null;
@@ -1460,6 +1666,26 @@
                 descriptionMinLength: "La description de l'entreprise doit contenir au moins 100 caractères",
                 fileSizeError: "La taille du fichier doit être inférieure à 5MB",
                 fileTypeError: "Seuls les fichiers .txt et .pdf sont autorisés",
+                
+                // Help Modal
+                helpText: "Comment obtenir la clé API",
+                apiKeyHelp: "Comment obtenir votre clé API",
+                step1: "1. Visitez la plateforme OpenAI",
+                step1Description: "Allez sur <a href='https://platform.openai.com/' target='_blank'>OpenAI Platform</a> et connectez-vous avec votre compte",
+                step2: "2. Naviguez vers les clés API",
+                step2Description: "Cliquez sur votre icône de profil en haut à droite, puis sélectionnez 'API Keys' dans le menu déroulant",
+                step3: "3. Créez une nouvelle clé API",
+                step3Description: "Cliquez sur le bouton 'Create new secret key' et donnez un nom descriptif à votre clé",
+                step4: "4. Copiez votre clé",
+                step4Description: "Copiez la clé API générée immédiatement et stockez-la en sécurité - vous ne pourrez plus la voir!",
+                step1Google: "1. Visitez Google AI Studio",
+                step1GoogleDescription: "Allez sur <a href='https://aistudio.google.com/prompts/new_chat' target='_blank'>Google AI Studio</a> et connectez-vous avec votre compte Google",
+                step2Google: "2. Accédez aux paramètres API",
+                step2GoogleDescription: "Cliquez sur le bouton 'Get API Key' dans le coin supérieur droit de l'interface",
+                step3Google: "3. Créez une clé API (gratuite)",
+                step3GoogleDescription: "Sélectionnez 'Create API key in new project' ou choisissez un projet existant",
+                step4Google: "4. Copiez votre clé",
+                step4GoogleDescription: "Copiez la clé API générée et stockez-la en sécurité pour l'utiliser dans cette application",
                 
                 // Placeholders
                 apiKeyPlaceholder: "Entrez votre clé API",
@@ -1555,6 +1781,26 @@
                 fileSizeError: "File size must be less than 5MB",
                 fileTypeError: "Only .txt and .pdf files are allowed",
                 
+                // Help Modal
+                helpText: "How to get API key",
+                apiKeyHelp: "How to Get Your API Key",
+                step1: "1. Visit OpenAI Platform",
+                step1Description: "Go to <a href='https://platform.openai.com/' target='_blank'>OpenAI Platform</a> and sign in with your account",
+                step2: "2. Navigate to API Keys",
+                step2Description: "Click on your profile icon in the top right, then select 'API Keys' from the dropdown menu",
+                step3: "3. Create New API Key",
+                step3Description: "Click 'Create new secret key' button and give your key a descriptive name",
+                step4: "4. Copy Your Key",
+                step4Description: "Copy the generated API key immediately and store it securely - you won't be able to see it again!",
+                step1Google: "1. Visit Google AI Studio",
+                step1GoogleDescription: "Go to <a href='https://aistudio.google.com/prompts/new_chat' target='_blank'>Google AI Studio</a> and sign in with your Google account",
+                step2Google: "2. Access API Settings",
+                step2GoogleDescription: "Click on 'Get API Key' button in the top right corner of the interface",
+                step3Google: "3. Create API Key (Free)",
+                step3GoogleDescription: "Select 'Create API key in new project' or choose an existing project",
+                step4Google: "4. Copy Your Key",
+                step4GoogleDescription: "Copy the generated API key and store it securely for use in this application",
+                
                 // Placeholders
                 apiKeyPlaceholder: "Enter your API key",
                 companyDescriptionPlaceholder: "Describe your company, its products, services, and current operations (minimum 100 characters)",
@@ -1631,7 +1877,12 @@
                 } else if (element.tagName === 'OPTION') {
                     element.textContent = t(key, params);
                 } else {
-                    element.textContent = t(key, params);
+                    // Use innerHTML for modal content that may contain HTML links
+                    if (element.closest('.modal-content')) {
+                        element.innerHTML = t(key, params);
+                    } else {
+                        element.textContent = t(key, params);
+                    }
                 }
             });
             
@@ -2237,6 +2488,45 @@
             updateModelTierOptions();
             updateModelInfo();
         }
+
+        // Modal functions
+        function openApiKeyModal() {
+            const modal = document.getElementById('apiKeyModal');
+            modal.style.display = 'block';
+            
+            // Show instructions for Google by default (since it's free)
+            showInstructions('google');
+        }
+        
+        function closeApiKeyModal() {
+            const modal = document.getElementById('apiKeyModal');
+            modal.style.display = 'none';
+        }
+        
+        function showInstructions(provider) {
+            // Update button states
+            document.getElementById('openaiInstructions').classList.toggle('active', provider === 'openai');
+            document.getElementById('googleInstructions').classList.toggle('active', provider === 'google');
+            
+            // Show/hide instruction sets
+            document.getElementById('openaiSteps').style.display = provider === 'openai' ? 'block' : 'none';
+            document.getElementById('googleSteps').style.display = provider === 'google' ? 'block' : 'none';
+        }
+        
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('apiKeyModal');
+            if (event.target === modal) {
+                closeApiKeyModal();
+            }
+        }
+        
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeApiKeyModal();
+            }
+        });
 
         // Initialize when DOM is ready
         if (document.readyState === 'loading') {
