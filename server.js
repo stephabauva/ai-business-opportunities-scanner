@@ -8,6 +8,7 @@ const path = require('path');
 const fs = require('fs');
 const { OpenAI } = require('openai');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
+const PDFDocument = require('pdfkit');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -208,6 +209,131 @@ const processAIResponse = (responseText, provider, model) => {
   }
 };
 
+// PDF Generation Function
+const generatePDF = (analysisData, companyDescription) => {
+  return new Promise((resolve, reject) => {
+    try {
+      const doc = new PDFDocument({ margin: 50 });
+      const filename = `analysis-${analysisData.id}.pdf`;
+      const filepath = path.join(__dirname, 'uploads', filename);
+      
+      // Pipe the PDF into a file
+      doc.pipe(fs.createWriteStream(filepath));
+
+      // Header Section
+      doc.fontSize(20).text('AI Business Opportunity Analysis Report', { align: 'center' });
+      doc.moveDown(0.5);
+      
+      // Company Description Summary
+      doc.fontSize(14).text('Company Overview', { underline: true });
+      doc.fontSize(12).text(companyDescription.substring(0, 300) + (companyDescription.length > 300 ? '...' : ''));
+      doc.moveDown();
+      
+      // Analysis Details
+      doc.fontSize(12);
+      doc.text(`Analysis Date: ${new Date(analysisData.analysisDate).toLocaleDateString()}`);
+      doc.text(`AI Provider: ${analysisData.provider.toUpperCase()}`);
+      doc.text(`Model: ${analysisData.model.toUpperCase()}`);
+      doc.moveDown();
+
+      // Executive Summary
+      doc.fontSize(16).text('Executive Summary', { underline: true });
+      doc.fontSize(12);
+      doc.text(`Total Opportunities Identified: ${analysisData.opportunities.length}`);
+      
+      const highPriorityCount = analysisData.opportunities.filter(opp => opp.priority >= 7).length;
+      doc.text(`High-Priority Opportunities: ${highPriorityCount}`);
+      
+      const quickWins = analysisData.opportunities.filter(opp => opp.impact === 'High' && opp.effort === 'Low').length;
+      doc.text(`Quick Wins (High Impact, Low Effort): ${quickWins}`);
+      doc.moveDown();
+
+      // Opportunities Section
+      doc.fontSize(16).text('Identified Opportunities', { underline: true });
+      doc.moveDown(0.5);
+      
+      analysisData.opportunities.forEach((opportunity, index) => {
+        doc.fontSize(14).text(`${index + 1}. ${opportunity.title}`, { underline: true });
+        doc.fontSize(12);
+        doc.text(`Priority Score: ${opportunity.priority}/10`);
+        doc.text(`Impact: ${opportunity.impact} | Effort: ${opportunity.effort}`);
+        doc.moveDown(0.3);
+        doc.text(opportunity.description);
+        doc.moveDown();
+        
+        // Impact/Effort Matrix Visual
+        const matrixY = doc.y;
+        doc.text('Impact/Effort Matrix:');
+        
+        // Simple text-based matrix representation
+        const impactScore = opportunity.impact === 'High' ? 3 : opportunity.impact === 'Medium' ? 2 : 1;
+        const effortScore = opportunity.effort === 'High' ? 3 : opportunity.effort === 'Medium' ? 2 : 1;
+        
+        doc.text(`  Impact: ${'●'.repeat(impactScore)}${'○'.repeat(3 - impactScore)}`);
+        doc.text(`  Effort: ${'●'.repeat(effortScore)}${'○'.repeat(3 - effortScore)}`);
+        doc.moveDown();
+        
+        // Add page break if needed
+        if (index < analysisData.opportunities.length - 1 && doc.y > 700) {
+          doc.addPage();
+        }
+      });
+
+      // Implementation Roadmap
+      if (doc.y > 600) {
+        doc.addPage();
+      }
+      
+      doc.fontSize(16).text('Implementation Roadmap', { underline: true });
+      doc.moveDown(0.5);
+      
+      // Sort opportunities by priority for roadmap
+      const sortedOpportunities = [...analysisData.opportunities].sort((a, b) => b.priority - a.priority);
+      
+      doc.fontSize(14).text('Recommended Implementation Order:', { underline: true });
+      doc.fontSize(12);
+      
+      sortedOpportunities.forEach((opportunity, index) => {
+        const phase = index < 2 ? 'Phase 1 (0-3 months)' : 
+                     index < 4 ? 'Phase 2 (3-6 months)' : 
+                     'Phase 3 (6+ months)';
+        
+        doc.text(`${index + 1}. ${opportunity.title} - ${phase}`);
+        doc.text(`   Priority: ${opportunity.priority}/10 | Impact: ${opportunity.impact} | Effort: ${opportunity.effort}`);
+        
+        if (opportunity.impact === 'High' && opportunity.effort === 'Low') {
+          doc.text('   ⭐ QUICK WIN - Prioritize for immediate implementation');
+        }
+        doc.moveDown(0.3);
+      });
+      
+      // Timeline Suggestions
+      doc.moveDown();
+      doc.fontSize(14).text('Timeline Suggestions:', { underline: true });
+      doc.fontSize(12);
+      doc.text('• Phase 1 (0-3 months): Focus on highest priority items and quick wins');
+      doc.text('• Phase 2 (3-6 months): Implement medium-priority opportunities');
+      doc.text('• Phase 3 (6+ months): Tackle complex, long-term initiatives');
+      doc.moveDown();
+      
+      // Footer
+      doc.fontSize(10).text('Generated by AI Business Opportunity Scanner', { align: 'center' });
+      
+      // Finalize the PDF
+      doc.end();
+      
+      doc.on('end', () => {
+        // Store the PDF path in memory for download
+        pdfStore.set(analysisData.id, filepath);
+        resolve(filepath);
+      });
+      
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
+
 // Routes
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
@@ -265,6 +391,9 @@ app.post('/api/analyze', upload.single('file'), async (req, res) => {
     
     // Process and validate the AI response
     const analysis = processAIResponse(aiResponse, provider, model);
+    
+    // Generate PDF report
+    await generatePDF(analysis, content);
     
     res.json(analysis);
 

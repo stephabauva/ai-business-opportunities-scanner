@@ -657,7 +657,13 @@
         // PDF download
         document.getElementById('downloadBtn').addEventListener('click', function() {
             if (analysisId) {
-                window.open(`/api/download/${analysisId}`, '_blank');
+                // Create a temporary anchor element for direct download
+                const link = document.createElement('a');
+                link.href = `/api/download/${analysisId}`;
+                link.download = `analysis-${analysisId}.pdf`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
             }
         });
 
