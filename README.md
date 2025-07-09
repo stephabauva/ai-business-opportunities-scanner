@@ -6,6 +6,9 @@
 
 ## English
 
+![Homepage](github-assets/home-page-ai-impl-en.png)
+*Clean, intuitive interface for easy AI provider selection and company analysis*
+
 ### 🌟 Overview
 
 The **AI Business Opportunity Scanner** is a powerful MVP application that analyzes company descriptions and generates AI implementation opportunities with prioritized roadmaps. Built with cutting-edge AI technology, it supports both OpenAI and Google Gemini APIs across three model tiers for optimal performance and cost-effectiveness.
@@ -98,6 +101,10 @@ API keys are sent securely with each request and are not stored on the server.
 6. **Review Results**: Browse the generated AI opportunities
 7. **Download Report**: Get a comprehensive PDF roadmap
 
+#### Generated AI Opportunities
+![AI Opportunities Output](github-assets/ai-impl-op-en.png)
+*Detailed AI implementation opportunities with impact/effort scoring*
+
 ### 🗂️ Project Structure
 
 ```
@@ -141,6 +148,9 @@ This project is licensed under the ISC License.
 ---
 
 ## Français
+
+![Page d'accueil](github-assets/page-de-garde-impl-ia-fr.png)
+*Interface intuitive et épurée pour une sélection facile du fournisseur IA et l'analyse d'entreprise*
 
 ### 🌟 Aperçu
 
@@ -233,6 +243,10 @@ Les clés API sont envoyées de manière sécurisée avec chaque requête et ne 
 5. **Générer l'Analyse**: Cliquez sur "Analyser les Opportunités"
 6. **Examiner les Résultats**: Parcourez les opportunités IA générées
 7. **Télécharger le Rapport**: Obtenez une feuille de route PDF complète
+
+#### Opportunités IA Générées
+![Résultats des Opportunités IA](github-assets/op-impl-ia-fr.png)
+*Opportunités d'implémentation IA détaillées avec notation impact/effort*
 
 ### 🗂️ Structure du Projet
 
