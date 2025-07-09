@@ -64,10 +64,16 @@ const modelMap = {
 };
 
 // Unified prompt template
-const createPrompt = (companyDescription, model = 'standard') => {
+const createPrompt = (companyDescription, model = 'standard', language = 'en') => {
+  // Language instructions based on selected language
+  const langInstructions = language === 'fr' 
+    ? 'Répondez en français. Toutes les opportunités, descriptions et métriques doivent être en français. Utilisez des termes techniques appropriés en français.'
+    : 'Respond in English.';
   // For nano models, use simpler structure
   if (model === 'nano') {
-    return `Analyze this company description and identify EXACTLY 4 specific AI implementation opportunities.
+    return `${langInstructions}
+
+Analyze this company description and identify EXACTLY 4 specific AI implementation opportunities.
 
 For each opportunity provide:
 - Title and brief description
@@ -112,7 +118,9 @@ Focus on practical, implementable solutions.`;
   }
   
   // For standard/mini models, use detailed structure
-  return `Analyze this company description and identify EXACTLY 4-5 specific AI implementation opportunities with comprehensive business cases.
+  return `${langInstructions}
+
+Analyze this company description and identify EXACTLY 4-5 specific AI implementation opportunities with comprehensive business cases.
 
 For each opportunity provide detailed information including:
 
@@ -201,7 +209,7 @@ Focus on practical, implementable AI solutions with realistic cost estimates and
 };
 
 // OpenAI integration
-const analyzeWithOpenAI = async (model, apiKey, content) => {
+const analyzeWithOpenAI = async (model, apiKey, content, language = 'en') => {
   try {
     const openai = new OpenAI({ apiKey });
     
@@ -214,7 +222,7 @@ const analyzeWithOpenAI = async (model, apiKey, content) => {
         },
         {
           role: "user",
-          content: createPrompt(content, model)
+          content: createPrompt(content, model, language)
         }
       ],
       temperature: 0.7,
@@ -229,12 +237,12 @@ const analyzeWithOpenAI = async (model, apiKey, content) => {
 };
 
 // Google Gemini integration
-const analyzeWithGemini = async (model, apiKey, content) => {
+const analyzeWithGemini = async (model, apiKey, content, language = 'en') => {
   try {
     const genAI = new GoogleGenerativeAI(apiKey);
     const geminiModel = genAI.getGenerativeModel({ model: modelMap.google[model] });
 
-    const result = await geminiModel.generateContent(createPrompt(content, model));
+    const result = await geminiModel.generateContent(createPrompt(content, model, language));
     const response = await result.response;
     return response.text();
   } catch (error) {
@@ -244,18 +252,45 @@ const analyzeWithGemini = async (model, apiKey, content) => {
 };
 
 // Provider factory pattern
-const analyzeWithProvider = async (provider, model, apiKey, content) => {
+const analyzeWithProvider = async (provider, model, apiKey, content, language = 'en') => {
   if (provider === 'openai') {
-    return await analyzeWithOpenAI(model, apiKey, content);
+    return await analyzeWithOpenAI(model, apiKey, content, language);
   } else if (provider === 'google') {
-    return await analyzeWithGemini(model, apiKey, content);
+    return await analyzeWithGemini(model, apiKey, content, language);
   } else {
     throw new Error('Invalid provider');
   }
 };
 
 // Response processing and validation
-const processAIResponse = (responseText, provider, model) => {
+const processAIResponse = (responseText, provider, model, language = 'en') => {
+  // Define fallback text for missing data based on language
+  const fallbackTexts = {
+    fr: {
+      assessmentNeeded: 'Évaluation nécessaire',
+      tbd: 'À déterminer',
+      impactAssessmentNeeded: 'Évaluation de l\'impact nécessaire',
+      trainingNeedsAssessmentRequired: 'Évaluation des besoins de formation requise',
+      vendorAssessmentNeeded: 'Évaluation des fournisseurs nécessaire',
+      successCriteriaNeeded: 'Critères de succès nécessaires',
+      initialAssessment: 'Jour 0-30 : Évaluation initiale',
+      development: 'Jour 30-60 : Développement',
+      implementation: 'Jour 60-90 : Implémentation'
+    },
+    en: {
+      assessmentNeeded: 'Assessment needed',
+      tbd: 'TBD',
+      impactAssessmentNeeded: 'Impact assessment needed',
+      trainingNeedsAssessmentRequired: 'Training needs assessment required',
+      vendorAssessmentNeeded: 'Vendor assessment needed',
+      successCriteriaNeeded: 'Success criteria needed',
+      initialAssessment: '0-30 days: Initial assessment',
+      development: '30-60 days: Development',
+      implementation: '60-90 days: Implementation'
+    }
+  };
+
+  const fallback = fallbackTexts[language] || fallbackTexts.en;
   try {
     // Clean up response text - remove markdown code blocks if present
     let cleanedResponse = responseText.trim();
@@ -342,31 +377,31 @@ const processAIResponse = (responseText, provider, model) => {
       // For nano models, convert simplified structure to detailed structure
       if (opp.implementation && opp.implementation.mainRisks) {
         result.implementation.riskAssessment = {
-          technical: opp.implementation.mainRisks[0] || 'Assessment needed',
-          business: opp.implementation.mainRisks[1] || 'Assessment needed',
-          change: opp.implementation.mainRisks[2] || 'Assessment needed'
+          technical: opp.implementation.mainRisks[0] || fallback.assessmentNeeded,
+          business: opp.implementation.mainRisks[1] || fallback.assessmentNeeded,
+          change: opp.implementation.mainRisks[2] || fallback.assessmentNeeded
         };
         result.implementation.resourceNeeds = {
-          teamSize: opp.implementation.teamSize || 'TBD',
-          estimatedBudget: opp.implementation.estimatedBudget || 'TBD',
-          skills: ['Assessment needed']
+          teamSize: opp.implementation.teamSize || fallback.tbd,
+          estimatedBudget: opp.implementation.estimatedBudget || fallback.tbd,
+          skills: [fallback.assessmentNeeded]
         };
-        result.implementation.timeline = opp.implementation.timeline || 'TBD';
-        result.implementation.technicalRequirements = ['Assessment needed'];
+        result.implementation.timeline = opp.implementation.timeline || fallback.tbd;
+        result.implementation.technicalRequirements = [fallback.assessmentNeeded];
         
         // Add minimal strategic recommendations for nano
         result.strategicRecommendations = {
           phases: {
-            phase1: '0-30 days: Initial assessment',
-            phase2: '30-60 days: Development',
-            phase3: '60-90 days: Implementation'
+            phase1: fallback.initialAssessment,
+            phase2: fallback.development,
+            phase3: fallback.implementation
           },
           changeManagement: {
-            stakeholderImpact: 'Impact assessment needed',
-            trainingNeeds: 'Training needs assessment required'
+            stakeholderImpact: fallback.impactAssessmentNeeded,
+            trainingNeeds: fallback.trainingNeedsAssessmentRequired
           },
-          vendorRecommendations: ['Vendor assessment needed'],
-          successCriteria: opp.businessCase?.successMetrics || ['Success criteria needed']
+          vendorRecommendations: [fallback.vendorAssessmentNeeded],
+          successCriteria: opp.businessCase?.successMetrics || [fallback.successCriteriaNeeded]
         };
       }
 
@@ -391,7 +426,224 @@ const processAIResponse = (responseText, provider, model) => {
 };
 
 // PDF Generation Function
-const generatePDF = (analysisData, companyDescription) => {
+const generatePDF = (analysisData, companyDescription, language = 'en') => {
+  // Fallback text for missing data
+  const fallbackText = {
+    fr: {
+      assessmentNeeded: 'Évaluation nécessaire',
+      tbd: 'À déterminer',
+      detailedAnalysisRequired: 'Analyse détaillée requise',
+      processAssessmentNeeded: 'Évaluation du processus actuel nécessaire',
+      timelineAssessmentRequired: 'Évaluation du calendrier requise',
+      resourcePlanningNeeded: 'Planification des ressources nécessaire',
+      costAnalysisRequired: 'Analyse des coûts requise',
+      technicalRiskAnalysisRequired: 'Analyse des risques techniques requise',
+      businessRiskAnalysisRequired: 'Analyse des risques d\'affaires requise',
+      changeManagementAssessmentRequired: 'Évaluation de la gestion du changement requise',
+      stakeholderAnalysisRequired: 'Analyse des parties prenantes requise',
+      trainingNeedsAssessmentRequired: 'Évaluation des besoins de formation requise',
+      analysisRequired: 'Analyse requise',
+      vendorAssessmentNeeded: 'Évaluation des fournisseurs nécessaire',
+      successCriteriaNeeded: 'Critères de succès nécessaires',
+      initialAssessment: 'Jour 0-30 : Évaluation initiale',
+      development: 'Jour 30-60 : Développement',
+      implementation: 'Jour 60-90 : Implémentation',
+      impactAssessmentNeeded: 'Évaluation de l\'impact nécessaire',
+      budgetAssessmentRequired: 'Évaluation du budget requise',
+      executiveSummaryText: 'Cette analyse a identifié {totalOpportunities} opportunités IA priorisées avec un potentiel significatif de transformation d\'affaires. Les recommandations se concentrent sur des solutions pratiques et implémentables qui équilibrent l\'impact et la faisabilité.',
+      implementationOrderText: 'Ordre d\'implémentation recommandé basé sur la priorité et les dépendances :',
+      keyMilestonesText: 'Jalons clés pour l\'évaluation :',
+      checkpoint30: '• Point de contrôle 30 jours : Adhésion des parties prenantes et allocation des ressources',
+      checkpoint60: '• Point de contrôle 60 jours : Faisabilité technique et résultats MVP',
+      checkpoint90: '• Point de contrôle 90 jours : Décision de déploiement complet et plan de mise à l\'échelle',
+      defineKpis: '• Définir des KPI et des métriques de succès spécifiques',
+      establishBaseline: '• Établir des mesures de base',
+      setupMonitoring: '• Mettre en place des systèmes de surveillance et de rapport',
+      immediateAction1: '1. Sécuriser le parrainage exécutif et l\'approbation du budget',
+      immediateAction2: '2. Assembler l\'équipe de projet avec les compétences requises',
+      immediateAction3: '3. Effectuer une évaluation détaillée de la faisabilité technique',
+      immediateAction4: '4. Développer un plan de projet complet avec des jalons',
+      immediateAction5: '5. Établir des métriques de succès et un cadre de surveillance'
+    },
+    en: {
+      assessmentNeeded: 'Assessment needed',
+      tbd: 'TBD',
+      detailedAnalysisRequired: 'Detailed problem analysis required',
+      processAssessmentNeeded: 'Current process assessment needed',
+      timelineAssessmentRequired: 'Timeline assessment required',
+      resourcePlanningNeeded: 'Resource planning needed',
+      costAnalysisRequired: 'Cost analysis required',
+      technicalRiskAnalysisRequired: 'Technical risk analysis required',
+      businessRiskAnalysisRequired: 'Business risk analysis required',
+      changeManagementAssessmentRequired: 'Change management assessment required',
+      stakeholderAnalysisRequired: 'Stakeholder analysis required',
+      trainingNeedsAssessmentRequired: 'Training needs assessment required',
+      analysisRequired: 'Analysis required',
+      vendorAssessmentNeeded: 'Vendor assessment needed',
+      successCriteriaNeeded: 'Success criteria needed',
+      initialAssessment: '0-30 days: Initial assessment',
+      development: '30-60 days: Development',
+      implementation: '60-90 days: Implementation',
+      impactAssessmentNeeded: 'Impact assessment needed',
+      budgetAssessmentRequired: 'Budget assessment required',
+      executiveSummaryText: 'This analysis identified {totalOpportunities} prioritized AI opportunities with significant potential for business transformation. The recommendations focus on practical, implementable solutions that balance impact with feasibility.',
+      implementationOrderText: 'Recommended implementation order based on priority and dependencies:',
+      keyMilestonesText: 'Key milestones for evaluation:',
+      checkpoint30: '• 30-day checkpoint: Stakeholder buy-in and resource allocation',
+      checkpoint60: '• 60-day checkpoint: Technical feasibility and MVP results',
+      checkpoint90: '• 90-day checkpoint: Full deployment decision and scaling plan',
+      defineKpis: '• Define specific KPIs and success metrics',
+      establishBaseline: '• Establish baseline measurements',
+      setupMonitoring: '• Set up monitoring and reporting systems',
+      immediateAction1: '1. Secure executive sponsorship and budget approval',
+      immediateAction2: '2. Assemble project team with required skills',
+      immediateAction3: '3. Conduct detailed technical feasibility assessment',
+      immediateAction4: '4. Develop comprehensive project plan with milestones',
+      immediateAction5: '5. Establish success metrics and monitoring framework'
+    }
+  };
+
+  const fallback = fallbackText[language] || fallbackText.en;
+
+  // PDF Labels based on language
+  const pdfLabels = {
+    fr: {
+      title: 'Rapport d\'Analyse d\'Opportunités Business IA',
+      subtitle: 'Évaluation Professionnelle et Feuille de Route d\'Implémentation',
+      analysisDate: 'Date d\'analyse',
+      aiProvider: 'Fournisseur IA',
+      model: 'Modèle',
+      companyOverview: 'Aperçu de l\'entreprise',
+      executiveSummary: 'Résumé Exécutif',
+      keyFindings: 'Conclusions Principales',
+      totalOpps: 'Opportunités Totales Identifiées',
+      highPriorityOpps: 'Opportunités Haute Priorité (7+ score)',
+      quickWins: 'Victoires Rapides (Impact Élevé, Effort Faible)',
+      strategicBets: 'Paris Stratégiques (Impact Élevé, Effort Élevé)',
+      financialSummary: 'Résumé de l\'Impact Financier',
+      costSavings: 'Économies de Coûts Potentielles Totales',
+      revenueIncrease: 'Augmentation de Revenus Potentielle Totale',
+      investment: 'Investissement Total Requis',
+      expectedRoi: 'ROI Attendu',
+      nextSteps: 'Prochaines Étapes Recommandées',
+      immediateFocus: 'Focus Immédiat',
+      timeline: 'Calendrier',
+      opportunityAnalysis: 'Analyse Détaillée des Opportunités',
+      priority: 'Priorité',
+      impact: 'Impact',
+      effort: 'Effort',
+      businessCase: 'Cas d\'Affaires',
+      problemStatement: 'Problème',
+      currentState: 'État Actuel',
+      aiSolution: 'Solution IA',
+      successMetrics: 'Métriques de Succès',
+      implementationDetails: 'Détails d\'Implémentation',
+      teamSize: 'Taille d\'Équipe',
+      budget: 'Budget Estimé',
+      technicalReqs: 'Exigences Techniques',
+      requiredSkills: 'Compétences Requises',
+      riskAssessment: 'Évaluation des Risques',
+      technicalRisk: 'Risque Technique',
+      businessRisk: 'Risque d\'Affaires',
+      changeRisk: 'Risque de Changement',
+      strategicRecs: 'Recommandations Stratégiques',
+      prioritizationMatrix: 'Matrice de Priorisation',
+      impactEffortAnalysis: 'Analyse Impact vs Effort',
+      quickWinsLabel: 'VICTOIRES RAPIDES (Impact Élevé, Effort Faible)',
+      strategicBetsLabel: 'PARIS STRATÉGIQUES (Impact Élevé, Effort Élevé)',
+      fillInLabel: 'OPPORTUNITÉS COMPLÉMENTAIRES (Impact/Effort Moyen)',
+      sequencing: 'Séquençage d\'Implémentation',
+      changeManagement: 'Stratégie de Gestion du Changement',
+      stakeholderImpact: 'Impact sur les Parties Prenantes',
+      trainingReqs: 'Exigences de Formation',
+      vendorRecs: 'Recommandations de Fournisseurs',
+      financialProjections: 'Projections Financières',
+      investmentSummary: 'Résumé d\'Investissement',
+      roiTimeline: 'Calendrier de ROI',
+      conservativeRoi: 'ROI Conservateur',
+      optimisticRoi: 'ROI Optimiste',
+      actionPlan: 'Plan d\'Action et Prochaines Étapes',
+      dayPlan: 'Plan 30/60/90 Jours pour la Priorité #1',
+      focus: 'Focus',
+      days: 'Jours',
+      decisionPoints: 'Points de Décision',
+      successCriteria: 'Critères de Succès',
+      immediateActions: 'Actions Immédiates Requises',
+      annually: 'annuellement',
+      phase: 'Phase',
+      months: 'mois',
+      generated: 'Généré par Scanner d\'Opportunités Business IA - Édition Professionnelle'
+    },
+    en: {
+      title: 'AI Business Opportunity Analysis Report',
+      subtitle: 'Professional Assessment & Implementation Roadmap',
+      analysisDate: 'Analysis Date',
+      aiProvider: 'AI Provider',
+      model: 'Model',
+      companyOverview: 'Company Overview',
+      executiveSummary: 'Executive Summary',
+      keyFindings: 'Key Findings',
+      totalOpps: 'Total Opportunities Identified',
+      highPriorityOpps: 'High-Priority Opportunities (7+ score)',
+      quickWins: 'Quick Wins (High Impact, Low Effort)',
+      strategicBets: 'Strategic Bets (High Impact, High Effort)',
+      financialSummary: 'Financial Impact Summary',
+      costSavings: 'Total Potential Cost Savings',
+      revenueIncrease: 'Total Revenue Increase Potential',
+      investment: 'Total Investment Required',
+      expectedRoi: 'Expected ROI',
+      nextSteps: 'Recommended Next Steps',
+      immediateFocus: 'Immediate Focus',
+      timeline: 'Timeline',
+      opportunityAnalysis: 'Detailed Opportunity Analysis',
+      priority: 'Priority',
+      impact: 'Impact',
+      effort: 'Effort',
+      businessCase: 'Business Case',
+      problemStatement: 'Problem Statement',
+      currentState: 'Current State',
+      aiSolution: 'AI Solution',
+      successMetrics: 'Success Metrics',
+      implementationDetails: 'Implementation Details',
+      teamSize: 'Team Size',
+      budget: 'Budget Estimate',
+      technicalReqs: 'Technical Requirements',
+      requiredSkills: 'Required Skills',
+      riskAssessment: 'Risk Assessment',
+      technicalRisk: 'Technical Risk',
+      businessRisk: 'Business Risk',
+      changeRisk: 'Change Risk',
+      strategicRecs: 'Strategic Recommendations',
+      prioritizationMatrix: 'Prioritization Matrix',
+      impactEffortAnalysis: 'Impact vs Effort Analysis',
+      quickWinsLabel: 'QUICK WINS (High Impact, Low Effort)',
+      strategicBetsLabel: 'STRATEGIC BETS (High Impact, High Effort)',
+      fillInLabel: 'FILL-IN OPPORTUNITIES (Medium Impact/Effort)',
+      sequencing: 'Implementation Sequencing',
+      changeManagement: 'Change Management Strategy',
+      stakeholderImpact: 'Stakeholder Impact',
+      trainingReqs: 'Training Requirements',
+      vendorRecs: 'Vendor Recommendations',
+      financialProjections: 'Financial Projections',
+      investmentSummary: 'Investment Summary',
+      roiTimeline: 'ROI Timeline',
+      conservativeRoi: 'Conservative ROI',
+      optimisticRoi: 'Optimistic ROI',
+      actionPlan: 'Next Steps & Action Plan',
+      dayPlan: '30/60/90 Day Plan for Priority #1',
+      focus: 'Focus',
+      days: 'Days',
+      decisionPoints: 'Decision Points',
+      successCriteria: 'Success Criteria',
+      immediateActions: 'Immediate Actions Required',
+      annually: 'annually',
+      phase: 'Phase',
+      months: 'months',
+      generated: 'Generated by AI Business Opportunity Scanner - Professional Edition'
+    }
+  };
+  
+  const labels = pdfLabels[language] || pdfLabels.en;
   return new Promise((resolve, reject) => {
     try {
       const doc = new PDFDocument({ margin: 50 });
@@ -448,73 +700,73 @@ const generatePDF = (analysisData, companyDescription) => {
       }, 0);
 
       // COVER PAGE
-      doc.fontSize(24).fillColor('black').text('AI Business Opportunity Analysis Report', { align: 'center' });
+      doc.fontSize(24).fillColor('black').text(labels.title, { align: 'center' });
       doc.moveDown(1);
-      doc.fontSize(16).text('Professional Assessment & Implementation Roadmap', { align: 'center' });
+      doc.fontSize(16).text(labels.subtitle, { align: 'center' });
       doc.moveDown(2);
       
       doc.fontSize(12);
-      doc.text(`Analysis Date: ${new Date(analysisData.analysisDate).toLocaleDateString()}`);
-      doc.text(`AI Provider: ${analysisData.provider.toUpperCase()}`);
-      doc.text(`Model: ${analysisData.model.toUpperCase()}`);
+      doc.text(`${labels.analysisDate}: ${new Date(analysisData.analysisDate).toLocaleDateString()}`);
+      doc.text(`${labels.aiProvider}: ${analysisData.provider.toUpperCase()}`);
+      doc.text(`${labels.model}: ${analysisData.model.toUpperCase()}`);
       doc.moveDown(2);
       
-      doc.fontSize(14).text('Company Overview', { underline: true });
+      doc.fontSize(14).text(labels.companyOverview, { underline: true });
       doc.fontSize(12).text(companyDescription.substring(0, 500) + (companyDescription.length > 500 ? '...' : ''));
       doc.addPage();
 
       // EXECUTIVE SUMMARY (1 page)
-      addSectionHeader('Executive Summary');
+      addSectionHeader(labels.executiveSummary);
       
       doc.fontSize(12);
-      doc.text(`This analysis identified ${totalOpportunities} prioritized AI opportunities with significant potential for business transformation. The recommendations focus on practical, implementable solutions that balance impact with feasibility.`);
+      doc.text(fallback.executiveSummaryText.replace('{totalOpportunities}', totalOpportunities));
       doc.moveDown();
       
-      addSubsectionHeader('Key Findings');
+      addSubsectionHeader(labels.keyFindings);
       doc.fontSize(12);
-      doc.text(`• Total Opportunities Identified: ${totalOpportunities}`);
-      doc.text(`• High-Priority Opportunities (7+ score): ${highPriorityCount}`);
-      doc.text(`• Quick Wins (High Impact, Low Effort): ${quickWins}`);
-      doc.text(`• Strategic Bets (High Impact, High Effort): ${strategicBets}`);
+      doc.text(`• ${labels.totalOpps}: ${totalOpportunities}`);
+      doc.text(`• ${labels.highPriorityOpps}: ${highPriorityCount}`);
+      doc.text(`• ${labels.quickWins}: ${quickWins}`);
+      doc.text(`• ${labels.strategicBets}: ${strategicBets}`);
       doc.moveDown();
       
-      addSubsectionHeader('Financial Impact Summary');
-      doc.text(`• Total Potential Cost Savings: $${totalCostSavings.toLocaleString()} annually`);
-      doc.text(`• Total Revenue Increase Potential: $${totalRevenueIncrease.toLocaleString()}`);
-      doc.text(`• Total Investment Required: $${totalInvestment.toLocaleString()}`);
-      doc.text(`• Expected ROI: ${totalCostSavings + totalRevenueIncrease > 0 ? Math.round(((totalCostSavings + totalRevenueIncrease) / totalInvestment) * 100) : 0}%`);
+      addSubsectionHeader(labels.financialSummary);
+      doc.text(`• ${labels.costSavings}: $${totalCostSavings.toLocaleString()} ${labels.annually}`);
+      doc.text(`• ${labels.revenueIncrease}: $${totalRevenueIncrease.toLocaleString()}`);
+      doc.text(`• ${labels.investment}: $${totalInvestment.toLocaleString()}`);
+      doc.text(`• ${labels.expectedRoi}: ${totalCostSavings + totalRevenueIncrease > 0 ? Math.round(((totalCostSavings + totalRevenueIncrease) / totalInvestment) * 100) : 0}%`);
       doc.moveDown();
       
-      addSubsectionHeader('Recommended Next Steps');
+      addSubsectionHeader(labels.nextSteps);
       const topOpportunity = analysisData.opportunities[0];
-      doc.text(`1. Immediate Focus: Begin with "${topOpportunity.title}" (Priority ${topOpportunity.priority}/10)`);
-      doc.text(`2. Timeline: ${topOpportunity.strategicRecommendations?.phases?.phase1 || 'Initiate planning within 30 days'}`);
-      doc.text(`3. Investment: ${topOpportunity.financialProjections?.investmentRequired || 'Budget assessment required'}`);
-      doc.text(`4. Expected ROI: ${topOpportunity.financialProjections?.roiTimeline || 'Timeline assessment required'}`);
+      doc.text(`1. ${labels.immediateFocus}: Begin with "${topOpportunity.title}" (${labels.priority} ${topOpportunity.priority}/10)`);
+      doc.text(`2. ${labels.timeline}: ${topOpportunity.strategicRecommendations?.phases?.phase1 || 'Initiate planning within 30 days'}`);
+      doc.text(`3. ${labels.investment}: ${topOpportunity.financialProjections?.investmentRequired || fallback.budgetAssessmentRequired}`);
+      doc.text(`4. ${labels.expectedRoi}: ${topOpportunity.financialProjections?.roiTimeline || fallback.timelineAssessmentRequired}`);
       doc.addPage();
 
       // OPPORTUNITY ANALYSIS (per opportunity)
-      addSectionHeader('Detailed Opportunity Analysis');
+      addSectionHeader(labels.opportunityAnalysis);
       
       analysisData.opportunities.forEach((opportunity, index) => {
         if (index > 0) doc.addPage();
         
         doc.fontSize(16).fillColor('black').text(`${index + 1}. ${opportunity.title}`, { underline: true });
-        doc.fontSize(12).text(`Priority Score: ${opportunity.priority}/10 | Impact: ${opportunity.impact} | Effort: ${opportunity.effort}`);
+        doc.fontSize(12).text(`${labels.priority}: ${opportunity.priority}/10 | ${labels.impact}: ${opportunity.impact} | ${labels.effort}: ${opportunity.effort}`);
         doc.moveDown();
         
         // Business Case
-        addSubsectionHeader('Business Case');
+        addSubsectionHeader(labels.businessCase);
         doc.fontSize(12);
-        doc.text(`Problem Statement: ${opportunity.businessCase?.problemStatement || 'Detailed problem analysis required'}`);
+        doc.text(`${labels.problemStatement}: ${opportunity.businessCase?.problemStatement || fallback.detailedAnalysisRequired}`);
         doc.moveDown(0.3);
-        doc.text(`Current State: ${opportunity.businessCase?.currentState || 'Current process assessment needed'}`);
+        doc.text(`${labels.currentState}: ${opportunity.businessCase?.currentState || fallback.processAssessmentNeeded}`);
         doc.moveDown(0.3);
-        doc.text(`AI Solution: ${opportunity.businessCase?.aiSolution || opportunity.description}`);
+        doc.text(`${labels.aiSolution}: ${opportunity.businessCase?.aiSolution || opportunity.description}`);
         doc.moveDown(0.3);
         
         if (opportunity.businessCase?.successMetrics && opportunity.businessCase.successMetrics.length > 0) {
-          doc.text('Success Metrics:');
+          doc.text(`${labels.successMetrics}:`);
           opportunity.businessCase.successMetrics.forEach(metric => {
             doc.text(`  • ${metric}`);
           });
@@ -522,14 +774,14 @@ const generatePDF = (analysisData, companyDescription) => {
         doc.moveDown();
         
         // Implementation Details
-        addSubsectionHeader('Implementation Details');
-        doc.text(`Timeline: ${opportunity.implementation?.timeline || 'Timeline assessment required'}`);
-        doc.text(`Team Size: ${opportunity.implementation?.resourceNeeds?.teamSize || 'Resource planning needed'}`);
-        doc.text(`Budget Estimate: ${opportunity.implementation?.resourceNeeds?.estimatedBudget || 'Cost analysis required'}`);
+        addSubsectionHeader(labels.implementationDetails);
+        doc.text(`${labels.timeline}: ${opportunity.implementation?.timeline || fallback.timelineAssessmentRequired}`);
+        doc.text(`${labels.teamSize}: ${opportunity.implementation?.resourceNeeds?.teamSize || fallback.resourcePlanningNeeded}`);
+        doc.text(`${labels.budget}: ${opportunity.implementation?.resourceNeeds?.estimatedBudget || fallback.costAnalysisRequired}`);
         doc.moveDown(0.3);
         
         if (opportunity.implementation?.technicalRequirements && opportunity.implementation.technicalRequirements.length > 0) {
-          doc.text('Technical Requirements:');
+          doc.text(`${labels.technicalReqs}:`);
           opportunity.implementation.technicalRequirements.forEach(req => {
             doc.text(`  • ${req}`);
           });
@@ -537,7 +789,7 @@ const generatePDF = (analysisData, companyDescription) => {
         doc.moveDown(0.3);
         
         if (opportunity.implementation?.resourceNeeds?.skills && opportunity.implementation.resourceNeeds.skills.length > 0) {
-          doc.text('Required Skills:');
+          doc.text(`${labels.requiredSkills}:`);
           opportunity.implementation.resourceNeeds.skills.forEach(skill => {
             doc.text(`  • ${skill}`);
           });
@@ -545,22 +797,22 @@ const generatePDF = (analysisData, companyDescription) => {
         doc.moveDown();
         
         // Risk Assessment
-        addSubsectionHeader('Risk Assessment');
-        doc.text(`Technical Risk: ${opportunity.implementation?.riskAssessment?.technical || 'Technical risk analysis required'}`);
+        addSubsectionHeader(labels.riskAssessment);
+        doc.text(`${labels.technicalRisk}: ${opportunity.implementation?.riskAssessment?.technical || fallback.technicalRiskAnalysisRequired}`);
         doc.moveDown(0.3);
-        doc.text(`Business Risk: ${opportunity.implementation?.riskAssessment?.business || 'Business risk analysis required'}`);
+        doc.text(`${labels.businessRisk}: ${opportunity.implementation?.riskAssessment?.business || fallback.businessRiskAnalysisRequired}`);
         doc.moveDown(0.3);
-        doc.text(`Change Risk: ${opportunity.implementation?.riskAssessment?.change || 'Change management assessment required'}`);
+        doc.text(`${labels.changeRisk}: ${opportunity.implementation?.riskAssessment?.change || fallback.changeManagementAssessmentRequired}`);
         doc.moveDown();
       });
       
       // STRATEGIC RECOMMENDATIONS
       doc.addPage();
-      addSectionHeader('Strategic Recommendations');
+      addSectionHeader(labels.strategicRecs);
       
-      addSubsectionHeader('Prioritization Matrix');
+      addSubsectionHeader(labels.prioritizationMatrix);
       doc.fontSize(12);
-      doc.text('Impact vs Effort Analysis:');
+      doc.text(`${labels.impactEffortAnalysis}:`);
       doc.moveDown(0.3);
       
       // Create a simple text-based matrix
@@ -568,39 +820,39 @@ const generatePDF = (analysisData, companyDescription) => {
       const strategicBetOpps = analysisData.opportunities.filter(opp => opp.impact === 'High' && opp.effort === 'High');
       const fillInOpps = analysisData.opportunities.filter(opp => opp.impact === 'Medium' || opp.effort === 'Medium');
       
-      doc.text('QUICK WINS (High Impact, Low Effort):');
+      doc.text(labels.quickWinsLabel);
       quickWinOpps.forEach(opp => doc.text(`  • ${opp.title} (Priority: ${opp.priority}/10)`));
       doc.moveDown(0.3);
       
-      doc.text('STRATEGIC BETS (High Impact, High Effort):');
+      doc.text(labels.strategicBetsLabel);
       strategicBetOpps.forEach(opp => doc.text(`  • ${opp.title} (Priority: ${opp.priority}/10)`));
       doc.moveDown(0.3);
       
-      doc.text('FILL-IN OPPORTUNITIES (Medium Impact/Effort):');
+      doc.text(labels.fillInLabel);
       fillInOpps.forEach(opp => doc.text(`  • ${opp.title} (Priority: ${opp.priority}/10)`));
       doc.moveDown();
       
-      addSubsectionHeader('Implementation Sequencing');
-      doc.text('Recommended implementation order based on priority and dependencies:');
+      addSubsectionHeader(labels.sequencing);
+      doc.text(fallback.implementationOrderText);
       doc.moveDown(0.3);
       
       analysisData.opportunities.forEach((opp, index) => {
         const phase = index < 2 ? 'Phase 1 (0-3 months)' : 
-                     index < 4 ? 'Phase 2 (3-6 months)' : 
-                     'Phase 3 (6+ months)';
+                     index < 4 ? `${labels.phase} 2 (3-6 ${labels.months})` : 
+                     `${labels.phase} 3 (6+ ${labels.months})`;
         doc.text(`${index + 1}. ${opp.title} - ${phase}`);
       });
       doc.moveDown();
       
-      addSubsectionHeader('Change Management Strategy');
+      addSubsectionHeader(labels.changeManagement);
       const topOpp = analysisData.opportunities[0];
-      doc.text(`Stakeholder Impact: ${topOpp.strategicRecommendations?.changeManagement?.stakeholderImpact || 'Stakeholder analysis required'}`);
+      doc.text(`${labels.stakeholderImpact}: ${topOpp.strategicRecommendations?.changeManagement?.stakeholderImpact || fallback.stakeholderAnalysisRequired}`);
       doc.moveDown(0.3);
-      doc.text(`Training Requirements: ${topOpp.strategicRecommendations?.changeManagement?.trainingNeeds || 'Training needs assessment required'}`);
+      doc.text(`${labels.trainingReqs}: ${topOpp.strategicRecommendations?.changeManagement?.trainingNeeds || fallback.trainingNeedsAssessmentRequired}`);
       doc.moveDown(0.3);
       
       if (topOpp.strategicRecommendations?.vendorRecommendations && topOpp.strategicRecommendations.vendorRecommendations.length > 0) {
-        doc.text('Vendor Recommendations:');
+        doc.text(`${labels.vendorRecs}:`);
         topOpp.strategicRecommendations.vendorRecommendations.forEach(vendor => {
           doc.text(`  • ${vendor}`);
         });
@@ -609,77 +861,77 @@ const generatePDF = (analysisData, companyDescription) => {
 
       // FINANCIAL PROJECTIONS
       doc.addPage();
-      addSectionHeader('Financial Projections');
+      addSectionHeader(labels.financialProjections);
       
-      addSubsectionHeader('Investment Summary');
+      addSubsectionHeader(labels.investmentSummary);
       doc.fontSize(12);
-      doc.text(`Total Investment Required: $${totalInvestment.toLocaleString()}`);
-      doc.text(`Expected Annual Cost Savings: $${totalCostSavings.toLocaleString()}`);
-      doc.text(`Potential Revenue Increase: $${totalRevenueIncrease.toLocaleString()}`);
-      doc.text(`Total Annual Benefit: $${(totalCostSavings + totalRevenueIncrease).toLocaleString()}`);
+      doc.text(`${labels.investment}: $${totalInvestment.toLocaleString()}`);
+      doc.text(`${labels.costSavings}: $${totalCostSavings.toLocaleString()}`);
+      doc.text(`${labels.revenueIncrease}: $${totalRevenueIncrease.toLocaleString()}`);
+      doc.text(`${labels.costSavings + ' + ' + labels.revenueIncrease}: $${(totalCostSavings + totalRevenueIncrease).toLocaleString()}`);
       doc.moveDown();
       
-      addSubsectionHeader('ROI Timeline');
+      addSubsectionHeader(labels.roiTimeline);
       doc.text('Projected return on investment by opportunity:');
       doc.moveDown(0.3);
       
       analysisData.opportunities.forEach((opp, index) => {
         doc.text(`${index + 1}. ${opp.title}`);
-        doc.text(`   Investment: ${opp.financialProjections?.investmentRequired || 'TBD'}`);
-        doc.text(`   ROI Timeline: ${opp.financialProjections?.roiTimeline || 'Assessment required'}`);
-        doc.text(`   Conservative ROI: ${opp.financialProjections?.scenarios?.conservative || 'Analysis required'}`);
-        doc.text(`   Optimistic ROI: ${opp.financialProjections?.scenarios?.optimistic || 'Analysis required'}`);
+        doc.text(`   ${labels.investment}: ${opp.financialProjections?.investmentRequired || 'TBD'}`);
+        doc.text(`   ${labels.roiTimeline}: ${opp.financialProjections?.roiTimeline || fallback.analysisRequired}`);
+        doc.text(`   ${labels.conservativeRoi}: ${opp.financialProjections?.scenarios?.conservative || fallback.analysisRequired}`);
+        doc.text(`   ${labels.optimisticRoi}: ${opp.financialProjections?.scenarios?.optimistic || fallback.analysisRequired}`);
         doc.moveDown(0.3);
       });
 
       // NEXT STEPS & ACTION PLAN
       doc.addPage();
-      addSectionHeader('Next Steps & Action Plan');
+      addSectionHeader(labels.actionPlan);
       
       const priorityOne = analysisData.opportunities[0];
       
-      addSubsectionHeader('30/60/90 Day Plan for Priority #1');
+      addSubsectionHeader(labels.dayPlan);
       doc.fontSize(12);
-      doc.text(`Focus: ${priorityOne.title}`);
+      doc.text(`${labels.focus}: ${priorityOne.title}`);
       doc.moveDown(0.3);
       
-      doc.text(`30 Days: ${priorityOne.strategicRecommendations?.phases?.phase1 || 'Initial planning and stakeholder alignment'}`);
+      doc.text(`30 ${labels.days}: ${priorityOne.strategicRecommendations?.phases?.phase1 || 'Initial planning and stakeholder alignment'}`);
       doc.moveDown(0.3);
-      doc.text(`60 Days: ${priorityOne.strategicRecommendations?.phases?.phase2 || 'MVP development and testing'}`);
+      doc.text(`60 ${labels.days}: ${priorityOne.strategicRecommendations?.phases?.phase2 || 'MVP development and testing'}`);
       doc.moveDown(0.3);
-      doc.text(`90 Days: ${priorityOne.strategicRecommendations?.phases?.phase3 || 'Full implementation and optimization'}`);
+      doc.text(`90 ${labels.days}: ${priorityOne.strategicRecommendations?.phases?.phase3 || 'Full implementation and optimization'}`);
       doc.moveDown();
       
-      addSubsectionHeader('Decision Points');
-      doc.text('Key milestones for evaluation:');
-      doc.text('• 30-day checkpoint: Stakeholder buy-in and resource allocation');
-      doc.text('• 60-day checkpoint: Technical feasibility and MVP results');
-      doc.text('• 90-day checkpoint: Full deployment decision and scaling plan');
+      addSubsectionHeader(labels.decisionPoints);
+      doc.text(fallback.keyMilestonesText);
+      doc.text(fallback.checkpoint30);
+      doc.text(fallback.checkpoint60);
+      doc.text(fallback.checkpoint90);
       doc.moveDown();
       
-      addSubsectionHeader('Success Criteria');
+      addSubsectionHeader(labels.successCriteria);
       if (priorityOne.strategicRecommendations?.successCriteria && priorityOne.strategicRecommendations.successCriteria.length > 0) {
         doc.text('Measures of success:');
         priorityOne.strategicRecommendations.successCriteria.forEach(criteria => {
           doc.text(`  • ${criteria}`);
         });
       } else {
-        doc.text('• Define specific KPIs and success metrics');
-        doc.text('• Establish baseline measurements');
-        doc.text('• Set up monitoring and reporting systems');
+        doc.text(fallback.defineKpis);
+        doc.text(fallback.establishBaseline);
+        doc.text(fallback.setupMonitoring);
       }
       doc.moveDown();
       
-      addSubsectionHeader('Immediate Actions Required');
-      doc.text('1. Secure executive sponsorship and budget approval');
-      doc.text('2. Assemble project team with required skills');
-      doc.text('3. Conduct detailed technical feasibility assessment');
-      doc.text('4. Develop comprehensive project plan with milestones');
-      doc.text('5. Establish success metrics and monitoring framework');
+      addSubsectionHeader(labels.immediateActions);
+      doc.text(fallback.immediateAction1);
+      doc.text(fallback.immediateAction2);
+      doc.text(fallback.immediateAction3);
+      doc.text(fallback.immediateAction4);
+      doc.text(fallback.immediateAction5);
       doc.moveDown();
       
       // Footer
-      doc.fontSize(10).text('Generated by AI Business Opportunity Scanner - Professional Edition', { align: 'center' });
+      doc.fontSize(10).text(labels.generated, { align: 'center' });
       
       // Finalize the PDF
       doc.end();
@@ -704,7 +956,7 @@ app.get('/', (req, res) => {
 app.post('/api/analyze', upload.single('file'), async (req, res) => {
   try {
     // Extract form data
-    const { provider, model, apiKey, companyDescription } = req.body;
+    const { provider, model, apiKey, companyDescription, language = 'en' } = req.body;
     
     // Validation
     if (!provider || !model || !apiKey) {
@@ -749,13 +1001,13 @@ app.post('/api/analyze', upload.single('file'), async (req, res) => {
     }
 
     // Analyze with selected AI provider
-    const aiResponse = await analyzeWithProvider(provider, model, apiKey, content);
+    const aiResponse = await analyzeWithProvider(provider, model, apiKey, content, language);
     
     // Process and validate the AI response
-    const analysis = processAIResponse(aiResponse, provider, model);
+    const analysis = processAIResponse(aiResponse, provider, model, language);
     
     // Generate PDF report
-    await generatePDF(analysis, content);
+    await generatePDF(analysis, content, language);
     
     res.json(analysis);
 

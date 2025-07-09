@@ -1463,7 +1463,53 @@
                 
                 // Placeholders
                 apiKeyPlaceholder: "Entrez votre clé API",
-                companyDescriptionPlaceholder: "Décrivez votre entreprise, ses produits, services et opérations actuelles (minimum 100 caractères)"
+                companyDescriptionPlaceholder: "Décrivez votre entreprise, ses produits, services et opérations actuelles (minimum 100 caractères)",
+                
+                // Results Labels
+                priority: "Priorité",
+                impact: "Impact",
+                effort: "Effort",
+                
+                // Opportunity Categories
+                customerService: "Service Client",
+                customerSupport: "Support Client",
+                voiceTechnology: "Technologie Vocale",
+                communication: "Communication",
+                processAutomation: "Automatisation des Processus",
+                roboticProcessAutomation: "Automatisation Robotique des Processus",
+                schedulingTimeManagement: "Gestion des Horaires et du Temps",
+                dataAnalytics: "Analyse de Données",
+                businessIntelligence: "Intelligence d'Affaires",
+                dataVisualization: "Visualisation de Données",
+                machineLearning: "Apprentissage Automatique",
+                artificialIntelligence: "Intelligence Artificielle",
+                computerVision: "Vision par Ordinateur",
+                naturalLanguageProcessing: "Traitement du Langage Naturel",
+                personalization: "Personnalisation",
+                customerSegmentation: "Segmentation Client",
+                securityFraudDetection: "Détection de Sécurité et Fraude",
+                anomalyDetection: "Détection d'Anomalies",
+                inventoryManagement: "Gestion des Stocks",
+                logisticsDelivery: "Logistique et Livraison",
+                marketingCampaigns: "Campagnes Marketing",
+                contentMarketing: "Marketing de Contenu",
+                predictiveAnalytics: "Analyse Prédictive",
+                trendAnalysis: "Analyse des Tendances",
+                optimization: "Optimisation",
+                performanceEnhancement: "Amélioration des Performances",
+                financialManagement: "Gestion Financière",
+                paymentProcessing: "Traitement des Paiements",
+                humanResources: "Ressources Humaines",
+                talentAcquisition: "Acquisition de Talents",
+                healthcare: "Santé",
+                medicalDiagnosis: "Diagnostic Médical",
+                educationTraining: "Formation et Éducation",
+                academicManagement: "Gestion Académique",
+                iotSmartSystems: "IoT et Systèmes Intelligents",
+                connectedDevices: "Appareils Connectés",
+                systemIntegration: "Intégration de Systèmes",
+                cloudInfrastructure: "Infrastructure Cloud",
+                aiImplementation: "Implémentation IA"
             },
             en: {
                 // Header
@@ -1511,7 +1557,53 @@
                 
                 // Placeholders
                 apiKeyPlaceholder: "Enter your API key",
-                companyDescriptionPlaceholder: "Describe your company, its products, services, and current operations (minimum 100 characters)"
+                companyDescriptionPlaceholder: "Describe your company, its products, services, and current operations (minimum 100 characters)",
+                
+                // Results Labels
+                priority: "Priority",
+                impact: "Impact",
+                effort: "Effort",
+                
+                // Opportunity Categories
+                customerService: "Customer Service",
+                customerSupport: "Customer Support",
+                voiceTechnology: "Voice Technology",
+                communication: "Communication",
+                processAutomation: "Process Automation",
+                roboticProcessAutomation: "Robotic Process Automation",
+                schedulingTimeManagement: "Scheduling & Time Management",
+                dataAnalytics: "Data Analytics",
+                businessIntelligence: "Business Intelligence",
+                dataVisualization: "Data Visualization",
+                machineLearning: "Machine Learning",
+                artificialIntelligence: "Artificial Intelligence",
+                computerVision: "Computer Vision",
+                naturalLanguageProcessing: "Natural Language Processing",
+                personalization: "Personalization",
+                customerSegmentation: "Customer Segmentation",
+                securityFraudDetection: "Security & Fraud Detection",
+                anomalyDetection: "Anomaly Detection",
+                inventoryManagement: "Inventory Management",
+                logisticsDelivery: "Logistics & Delivery",
+                marketingCampaigns: "Marketing & Campaigns",
+                contentMarketing: "Content Marketing",
+                predictiveAnalytics: "Predictive Analytics",
+                trendAnalysis: "Trend Analysis",
+                optimization: "Optimization",
+                performanceEnhancement: "Performance Enhancement",
+                financialManagement: "Financial Management",
+                paymentProcessing: "Payment Processing",
+                humanResources: "Human Resources",
+                talentAcquisition: "Talent Acquisition",
+                healthcare: "Healthcare",
+                medicalDiagnosis: "Medical Diagnosis",
+                educationTraining: "Education & Training",
+                academicManagement: "Academic Management",
+                iotSmartSystems: "IoT & Smart Systems",
+                connectedDevices: "Connected Devices",
+                systemIntegration: "System Integration",
+                cloudInfrastructure: "Cloud Infrastructure",
+                aiImplementation: "AI Implementation"
             }
         };
         
@@ -1780,6 +1872,9 @@
                     formData.append('file', fileInput.files[0]);
                 }
                 
+                // Add language parameter
+                formData.append('language', currentLanguage);
+                
                 // Send request
                 const response = await fetch('/api/analyze', {
                     method: 'POST',
@@ -1868,23 +1963,23 @@
                             <h3 class="opportunity-title-enhanced">${opportunity.title}</h3>
                             <div class="opportunity-category">${opportunityCategory}</div>
                         </div>
-                        <div class="opportunity-priority-enhanced">Priority: ${opportunity.priority}</div>
+                        <div class="opportunity-priority-enhanced">${t('priority')}: ${opportunity.priority}</div>
                     </div>
                     <div class="opportunity-description">${opportunity.description}</div>
                     <div class="progress-container">
                         <div class="progress-item">
-                            <div class="progress-label">Impact</div>
+                            <div class="progress-label">${t('impact')}</div>
                             <div class="progress-bar">
                                 <div class="progress-fill ${opportunity.impact.toLowerCase()}" style="width: ${getProgressWidth(opportunity.impact)}%"></div>
                             </div>
-                            <div class="progress-value">${opportunity.impact}</div>
+                            <div class="progress-value">${t(opportunity.impact.toLowerCase())}</div>
                         </div>
                         <div class="progress-item">
-                            <div class="progress-label">Effort</div>
+                            <div class="progress-label">${t('effort')}</div>
                             <div class="progress-bar">
                                 <div class="progress-fill ${opportunity.effort.toLowerCase()}" style="width: ${getProgressWidth(opportunity.effort)}%"></div>
                             </div>
-                            <div class="progress-value">${opportunity.effort}</div>
+                            <div class="progress-value">${t(opportunity.effort.toLowerCase())}</div>
                         </div>
                     </div>
                 `;
@@ -2004,97 +2099,97 @@
             const titleLower = title.toLowerCase();
             
             // Customer Service & Communication
-            if (titleLower.includes('chatbot') || titleLower.includes('chat') || titleLower.includes('assistant')) return 'Customer Service';
-            if (titleLower.includes('support') || titleLower.includes('help') || titleLower.includes('ticket')) return 'Customer Support';
-            if (titleLower.includes('voice') || titleLower.includes('speech') || titleLower.includes('audio')) return 'Voice Technology';
-            if (titleLower.includes('email') || titleLower.includes('message') || titleLower.includes('notification')) return 'Communication';
+            if (titleLower.includes('chatbot') || titleLower.includes('chat') || titleLower.includes('assistant')) return t('customerService');
+            if (titleLower.includes('support') || titleLower.includes('help') || titleLower.includes('ticket')) return t('customerSupport');
+            if (titleLower.includes('voice') || titleLower.includes('speech') || titleLower.includes('audio')) return t('voiceTechnology');
+            if (titleLower.includes('email') || titleLower.includes('message') || titleLower.includes('notification')) return t('communication');
             
             // Automation & Workflow
-            if (titleLower.includes('automation') || titleLower.includes('workflow') || titleLower.includes('process')) return 'Process Automation';
-            if (titleLower.includes('robot') || titleLower.includes('rpa') || titleLower.includes('robotic')) return 'Robotic Process Automation';
-            if (titleLower.includes('scheduling') || titleLower.includes('calendar') || titleLower.includes('time')) return 'Scheduling & Time Management';
+            if (titleLower.includes('automation') || titleLower.includes('workflow') || titleLower.includes('process')) return t('processAutomation');
+            if (titleLower.includes('robot') || titleLower.includes('rpa') || titleLower.includes('robotic')) return t('roboticProcessAutomation');
+            if (titleLower.includes('scheduling') || titleLower.includes('calendar') || titleLower.includes('time')) return t('schedulingTimeManagement');
             if (titleLower.includes('pipeline') || titleLower.includes('cicd') || titleLower.includes('deploy')) return 'DevOps & Deployment';
             
             // Data & Analytics
-            if (titleLower.includes('analytics') || titleLower.includes('data') || titleLower.includes('insight')) return 'Data Analytics';
-            if (titleLower.includes('dashboard') || titleLower.includes('reporting') || titleLower.includes('report')) return 'Business Intelligence';
-            if (titleLower.includes('visualization') || titleLower.includes('chart') || titleLower.includes('graph')) return 'Data Visualization';
-            if (titleLower.includes('mining') || titleLower.includes('etl') || titleLower.includes('warehouse')) return 'Data Engineering';
-            if (titleLower.includes('business intelligence') || titleLower.includes('bi') || titleLower.includes('kpi')) return 'Business Intelligence';
+            if (titleLower.includes('analytics') || titleLower.includes('data') || titleLower.includes('insight')) return t('dataAnalytics');
+            if (titleLower.includes('dashboard') || titleLower.includes('reporting') || titleLower.includes('report')) return t('businessIntelligence');
+            if (titleLower.includes('visualization') || titleLower.includes('chart') || titleLower.includes('graph')) return t('dataVisualization');
+            if (titleLower.includes('mining') || titleLower.includes('etl') || titleLower.includes('warehouse')) return t('dataAnalytics');
+            if (titleLower.includes('business intelligence') || titleLower.includes('bi') || titleLower.includes('kpi')) return t('businessIntelligence');
             
             // Machine Learning & AI
-            if (titleLower.includes('machine learning') || titleLower.includes('ml') || titleLower.includes('model')) return 'Machine Learning';
-            if (titleLower.includes('neural') || titleLower.includes('deep learning') || titleLower.includes('ai')) return 'Artificial Intelligence';
-            if (titleLower.includes('computer vision') || titleLower.includes('image') || titleLower.includes('visual')) return 'Computer Vision';
-            if (titleLower.includes('nlp') || titleLower.includes('natural language') || titleLower.includes('text')) return 'Natural Language Processing';
+            if (titleLower.includes('machine learning') || titleLower.includes('ml') || titleLower.includes('model')) return t('machineLearning');
+            if (titleLower.includes('neural') || titleLower.includes('deep learning') || titleLower.includes('ai')) return t('artificialIntelligence');
+            if (titleLower.includes('computer vision') || titleLower.includes('image') || titleLower.includes('visual')) return t('computerVision');
+            if (titleLower.includes('nlp') || titleLower.includes('natural language') || titleLower.includes('text')) return t('naturalLanguageProcessing');
             
             // Personalization & Recommendations
-            if (titleLower.includes('personalization') || titleLower.includes('recommendation') || titleLower.includes('suggest')) return 'Personalization';
-            if (titleLower.includes('targeting') || titleLower.includes('segment') || titleLower.includes('profile')) return 'Customer Segmentation';
+            if (titleLower.includes('personalization') || titleLower.includes('recommendation') || titleLower.includes('suggest')) return t('personalization');
+            if (titleLower.includes('targeting') || titleLower.includes('segment') || titleLower.includes('profile')) return t('customerSegmentation');
             if (titleLower.includes('preference') || titleLower.includes('taste') || titleLower.includes('like')) return 'User Experience';
             
             // Security & Fraud
-            if (titleLower.includes('fraud') || titleLower.includes('security') || titleLower.includes('detect')) return 'Security & Fraud Detection';
-            if (titleLower.includes('anomaly') || titleLower.includes('unusual') || titleLower.includes('suspicious')) return 'Anomaly Detection';
-            if (titleLower.includes('threat') || titleLower.includes('risk') || titleLower.includes('vulnerability')) return 'Risk Management';
-            if (titleLower.includes('compliance') || titleLower.includes('audit') || titleLower.includes('regulation')) return 'Compliance & Audit';
+            if (titleLower.includes('fraud') || titleLower.includes('security') || titleLower.includes('detect')) return t('securityFraudDetection');
+            if (titleLower.includes('anomaly') || titleLower.includes('unusual') || titleLower.includes('suspicious')) return t('anomalyDetection');
+            if (titleLower.includes('threat') || titleLower.includes('risk') || titleLower.includes('vulnerability')) return t('securityFraudDetection');
+            if (titleLower.includes('compliance') || titleLower.includes('audit') || titleLower.includes('regulation')) return t('securityFraudDetection');
             
             // Operations & Supply Chain
-            if (titleLower.includes('inventory') || titleLower.includes('supply') || titleLower.includes('stock')) return 'Inventory Management';
-            if (titleLower.includes('logistics') || titleLower.includes('shipping') || titleLower.includes('delivery')) return 'Logistics & Delivery';
-            if (titleLower.includes('procurement') || titleLower.includes('purchasing') || titleLower.includes('vendor')) return 'Procurement';
-            if (titleLower.includes('manufacturing') || titleLower.includes('production') || titleLower.includes('factory')) return 'Manufacturing';
+            if (titleLower.includes('inventory') || titleLower.includes('supply') || titleLower.includes('stock')) return t('inventoryManagement');
+            if (titleLower.includes('logistics') || titleLower.includes('shipping') || titleLower.includes('delivery')) return t('logisticsDelivery');
+            if (titleLower.includes('procurement') || titleLower.includes('purchasing') || titleLower.includes('vendor')) return t('inventoryManagement');
+            if (titleLower.includes('manufacturing') || titleLower.includes('production') || titleLower.includes('factory')) return t('inventoryManagement');
             
             // Marketing & Sales
-            if (titleLower.includes('marketing') || titleLower.includes('campaign') || titleLower.includes('promotion')) return 'Marketing & Campaigns';
-            if (titleLower.includes('content') || titleLower.includes('blog') || titleLower.includes('article')) return 'Content Marketing';
-            if (titleLower.includes('social') || titleLower.includes('media') || titleLower.includes('influence')) return 'Social Media';
-            if (titleLower.includes('sales') || titleLower.includes('lead') || titleLower.includes('conversion')) return 'Sales & Lead Generation';
-            if (titleLower.includes('seo') || titleLower.includes('search') || titleLower.includes('ranking')) return 'SEO & Search';
+            if (titleLower.includes('marketing') || titleLower.includes('campaign') || titleLower.includes('promotion')) return t('marketingCampaigns');
+            if (titleLower.includes('content') || titleLower.includes('blog') || titleLower.includes('article')) return t('contentMarketing');
+            if (titleLower.includes('social') || titleLower.includes('media') || titleLower.includes('influence')) return t('marketingCampaigns');
+            if (titleLower.includes('sales') || titleLower.includes('lead') || titleLower.includes('conversion')) return t('marketingCampaigns');
+            if (titleLower.includes('seo') || titleLower.includes('search') || titleLower.includes('ranking')) return t('marketingCampaigns');
             
             // Prediction & Forecasting
-            if (titleLower.includes('prediction') || titleLower.includes('forecast') || titleLower.includes('predict')) return 'Predictive Analytics';
-            if (titleLower.includes('trend') || titleLower.includes('pattern') || titleLower.includes('seasonal')) return 'Trend Analysis';
-            if (titleLower.includes('demand') || titleLower.includes('planning') || titleLower.includes('capacity')) return 'Demand Planning';
+            if (titleLower.includes('prediction') || titleLower.includes('forecast') || titleLower.includes('predict')) return t('predictiveAnalytics');
+            if (titleLower.includes('trend') || titleLower.includes('pattern') || titleLower.includes('seasonal')) return t('trendAnalysis');
+            if (titleLower.includes('demand') || titleLower.includes('planning') || titleLower.includes('capacity')) return t('predictiveAnalytics');
             
             // Optimization & Performance
-            if (titleLower.includes('optimization') || titleLower.includes('improve') || titleLower.includes('enhance')) return 'Optimization';
-            if (titleLower.includes('efficiency') || titleLower.includes('performance') || titleLower.includes('speed')) return 'Performance Enhancement';
-            if (titleLower.includes('cost') || titleLower.includes('budget') || titleLower.includes('expense')) return 'Cost Management';
-            if (titleLower.includes('quality') || titleLower.includes('testing') || titleLower.includes('validation')) return 'Quality Assurance';
+            if (titleLower.includes('optimization') || titleLower.includes('improve') || titleLower.includes('enhance')) return t('optimization');
+            if (titleLower.includes('efficiency') || titleLower.includes('performance') || titleLower.includes('speed')) return t('performanceEnhancement');
+            if (titleLower.includes('cost') || titleLower.includes('budget') || titleLower.includes('expense')) return t('financialManagement');
+            if (titleLower.includes('quality') || titleLower.includes('testing') || titleLower.includes('validation')) return t('optimization');
             
             // Financial & Accounting
-            if (titleLower.includes('financial') || titleLower.includes('finance') || titleLower.includes('accounting')) return 'Financial Management';
-            if (titleLower.includes('payment') || titleLower.includes('billing') || titleLower.includes('invoice')) return 'Payment Processing';
-            if (titleLower.includes('pricing') || titleLower.includes('revenue') || titleLower.includes('profit')) return 'Revenue Management';
+            if (titleLower.includes('financial') || titleLower.includes('finance') || titleLower.includes('accounting')) return t('financialManagement');
+            if (titleLower.includes('payment') || titleLower.includes('billing') || titleLower.includes('invoice')) return t('paymentProcessing');
+            if (titleLower.includes('pricing') || titleLower.includes('revenue') || titleLower.includes('profit')) return t('financialManagement');
             
             // HR & Employee Management
-            if (titleLower.includes('hr') || titleLower.includes('employee') || titleLower.includes('staff')) return 'Human Resources';
-            if (titleLower.includes('recruitment') || titleLower.includes('hiring') || titleLower.includes('talent')) return 'Talent Acquisition';
-            if (titleLower.includes('training') || titleLower.includes('learning') || titleLower.includes('development')) return 'Learning & Development';
+            if (titleLower.includes('hr') || titleLower.includes('employee') || titleLower.includes('staff')) return t('humanResources');
+            if (titleLower.includes('recruitment') || titleLower.includes('hiring') || titleLower.includes('talent')) return t('talentAcquisition');
+            if (titleLower.includes('training') || titleLower.includes('learning') || titleLower.includes('development')) return t('educationTraining');
             
             // Healthcare & Medical
-            if (titleLower.includes('health') || titleLower.includes('medical') || titleLower.includes('patient')) return 'Healthcare';
-            if (titleLower.includes('diagnosis') || titleLower.includes('symptom') || titleLower.includes('treatment')) return 'Medical Diagnosis';
-            if (titleLower.includes('drug') || titleLower.includes('medicine') || titleLower.includes('pharmaceutical')) return 'Pharmaceutical';
+            if (titleLower.includes('health') || titleLower.includes('medical') || titleLower.includes('patient')) return t('healthcare');
+            if (titleLower.includes('diagnosis') || titleLower.includes('symptom') || titleLower.includes('treatment')) return t('medicalDiagnosis');
+            if (titleLower.includes('drug') || titleLower.includes('medicine') || titleLower.includes('pharmaceutical')) return t('healthcare');
             
             // Education & Training
-            if (titleLower.includes('education') || titleLower.includes('learning') || titleLower.includes('course')) return 'Education & Training';
-            if (titleLower.includes('student') || titleLower.includes('teacher') || titleLower.includes('academic')) return 'Academic Management';
-            if (titleLower.includes('quiz') || titleLower.includes('test') || titleLower.includes('assessment')) return 'Assessment & Testing';
+            if (titleLower.includes('education') || titleLower.includes('learning') || titleLower.includes('course')) return t('educationTraining');
+            if (titleLower.includes('student') || titleLower.includes('teacher') || titleLower.includes('academic')) return t('academicManagement');
+            if (titleLower.includes('quiz') || titleLower.includes('test') || titleLower.includes('assessment')) return t('educationTraining');
             
             // IoT & Smart Systems
-            if (titleLower.includes('iot') || titleLower.includes('sensor') || titleLower.includes('smart')) return 'IoT & Smart Systems';
-            if (titleLower.includes('device') || titleLower.includes('connected') || titleLower.includes('remote')) return 'Connected Devices';
-            if (titleLower.includes('monitoring') || titleLower.includes('tracking') || titleLower.includes('surveillance')) return 'Monitoring & Tracking';
+            if (titleLower.includes('iot') || titleLower.includes('sensor') || titleLower.includes('smart')) return t('iotSmartSystems');
+            if (titleLower.includes('device') || titleLower.includes('connected') || titleLower.includes('remote')) return t('connectedDevices');
+            if (titleLower.includes('monitoring') || titleLower.includes('tracking') || titleLower.includes('surveillance')) return t('iotSmartSystems');
             
             // General Technology
-            if (titleLower.includes('api') || titleLower.includes('integration') || titleLower.includes('connect')) return 'System Integration';
-            if (titleLower.includes('cloud') || titleLower.includes('server') || titleLower.includes('infrastructure')) return 'Cloud Infrastructure';
-            if (titleLower.includes('mobile') || titleLower.includes('app') || titleLower.includes('application')) return 'Mobile Development';
-            if (titleLower.includes('web') || titleLower.includes('website') || titleLower.includes('portal')) return 'Web Development';
+            if (titleLower.includes('api') || titleLower.includes('integration') || titleLower.includes('connect')) return t('systemIntegration');
+            if (titleLower.includes('cloud') || titleLower.includes('server') || titleLower.includes('infrastructure')) return t('cloudInfrastructure');
+            if (titleLower.includes('mobile') || titleLower.includes('app') || titleLower.includes('application')) return t('systemIntegration');
+            if (titleLower.includes('web') || titleLower.includes('website') || titleLower.includes('portal')) return t('systemIntegration');
             
-            return 'AI Implementation';
+            return t('aiImplementation');
         }
         
         // Get progress bar width based on impact/effort level
