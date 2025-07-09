@@ -1276,7 +1276,7 @@
                 <div class="form-group">
                     <label for="apiKey" id="apiKeyLabel">OpenAI API Key</label>
                     <div class="input-container">
-                        <input type="password" class="input-field" id="apiKey" name="apiKey" placeholder="Enter your API key" required autocomplete="off" data-form-type="other">
+                        <input type="password" class="input-field" id="apiKey" name="apiKey" placeholder="Enter your API key" required autocomplete="new-password" data-form-type="other" data-lpignore="true">
                     </div>
                 </div>
 
@@ -1381,12 +1381,33 @@
             const apiKeyLabel = document.getElementById('apiKeyLabel');
             apiKeyLabel.textContent = provider === 'openai' ? 'OpenAI API Key' : 'Google Gemini API Key';
             
+            // Update model tier options
+            updateModelTierOptions();
+            
             // Update model info
             updateModelInfo();
         }
 
         // Model tier selection
         document.getElementById('modelTier').addEventListener('change', updateModelInfo);
+
+        function updateModelTierOptions() {
+            const modelTierSelect = document.getElementById('modelTier');
+            
+            if (currentProvider === 'openai') {
+                modelTierSelect.innerHTML = `
+                    <option value="nano">Nano - Fast, cost-effective analysis</option>
+                    <option value="mini">Mini - Balanced performance</option>
+                    <option value="standard">Standard - Most comprehensive analysis</option>
+                `;
+            } else {
+                modelTierSelect.innerHTML = `
+                    <option value="nano">Lite - Fast, cost-effective analysis</option>
+                    <option value="mini">Flash - Balanced performance</option>
+                    <option value="standard">Pro - Most comprehensive analysis</option>
+                `;
+            }
+        }
 
         function updateModelInfo() {
             const modelTier = document.getElementById('modelTier').value;
@@ -1867,6 +1888,7 @@
         });
 
         // Initialize
+        updateModelTierOptions();
         updateModelInfo();
     </script>
 </body>
