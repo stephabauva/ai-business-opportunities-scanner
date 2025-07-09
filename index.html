@@ -546,13 +546,13 @@
                 // Prepare form data
                 const formData = new FormData();
                 formData.append('provider', currentProvider);
-                formData.append('modelTier', document.getElementById('modelTier').value);
+                formData.append('model', document.getElementById('modelTier').value);
                 formData.append('apiKey', document.getElementById('apiKey').value);
                 formData.append('companyDescription', document.getElementById('companyDescription').value);
                 
                 const fileInput = document.getElementById('companyFile');
                 if (fileInput.files[0]) {
-                    formData.append('companyFile', fileInput.files[0]);
+                    formData.append('file', fileInput.files[0]);
                 }
                 
                 // Send request

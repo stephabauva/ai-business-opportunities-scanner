@@ -6,6 +6,8 @@ const multer = require('multer');
 const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
+const { OpenAI } = require('openai');
+const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -45,6 +47,166 @@ const upload = multer({
 
 // Store for temporary PDF files
 const pdfStore = new Map();
+
+// Model mapping for different providers
+const modelMap = {
+  openai: {
+    nano: 'gpt-4o-mini',
+    mini: 'gpt-4o-mini',
+    standard: 'gpt-4o'
+  },
+  google: {
+    nano: 'gemini-1.5-flash-8b',
+    mini: 'gemini-1.5-flash',
+    standard: 'gemini-1.5-pro'
+  }
+};
+
+// Unified prompt template
+const createPrompt = (companyDescription) => {
+  return `Analyze this company description and identify 3-5 specific AI implementation opportunities.
+For each opportunity provide:
+- Title (concise, specific)
+- Description (2-3 sentences explaining the implementation)
+- Impact (High/Medium/Low)
+- Effort (High/Medium/Low)
+- Priority Score (1-10, where 10 is highest priority)
+
+Company Description: ${companyDescription}
+
+Return your response as a valid JSON array with the following structure:
+[
+  {
+    "title": "Opportunity Title",
+    "description": "Detailed description of the AI implementation opportunity.",
+    "impact": "High|Medium|Low",
+    "effort": "High|Medium|Low",
+    "priority": 8
+  }
+]
+
+Focus on practical, implementable AI solutions that would provide real business value.`;
+};
+
+// OpenAI integration
+const analyzeWithOpenAI = async (model, apiKey, content) => {
+  try {
+    const openai = new OpenAI({ apiKey });
+    
+    const response = await openai.chat.completions.create({
+      model: modelMap.openai[model],
+      messages: [
+        {
+          role: "system",
+          content: "You are an AI business consultant specializing in identifying practical AI implementation opportunities for businesses. Always respond with valid JSON."
+        },
+        {
+          role: "user",
+          content: createPrompt(content)
+        }
+      ],
+      temperature: 0.7,
+      max_tokens: 2000
+    });
+
+    return response.choices[0].message.content;
+  } catch (error) {
+    console.error('OpenAI API error:', error);
+    throw new Error(`OpenAI API error: ${error.message}`);
+  }
+};
+
+// Google Gemini integration
+const analyzeWithGemini = async (model, apiKey, content) => {
+  try {
+    const genAI = new GoogleGenerativeAI(apiKey);
+    const geminiModel = genAI.getGenerativeModel({ model: modelMap.google[model] });
+
+    const result = await geminiModel.generateContent(createPrompt(content));
+    const response = await result.response;
+    return response.text();
+  } catch (error) {
+    console.error('Gemini API error:', error);
+    throw new Error(`Gemini API error: ${error.message}`);
+  }
+};
+
+// Provider factory pattern
+const analyzeWithProvider = async (provider, model, apiKey, content) => {
+  if (provider === 'openai') {
+    return await analyzeWithOpenAI(model, apiKey, content);
+  } else if (provider === 'google') {
+    return await analyzeWithGemini(model, apiKey, content);
+  } else {
+    throw new Error('Invalid provider');
+  }
+};
+
+// Response processing and validation
+const processAIResponse = (responseText, provider, model) => {
+  try {
+    // Clean up response text - remove markdown code blocks if present
+    let cleanedResponse = responseText.trim();
+    if (cleanedResponse.startsWith('```json')) {
+      cleanedResponse = cleanedResponse.replace(/```json\n?/g, '').replace(/```$/g, '');
+    }
+    if (cleanedResponse.startsWith('```')) {
+      cleanedResponse = cleanedResponse.replace(/```\n?/g, '').replace(/```$/g, '');
+    }
+
+    // Parse JSON
+    const opportunities = JSON.parse(cleanedResponse);
+    
+    // Validate structure
+    if (!Array.isArray(opportunities)) {
+      throw new Error('Response is not an array');
+    }
+
+    // Validate each opportunity
+    const validatedOpportunities = opportunities.map((opp, index) => {
+      if (!opp.title || !opp.description || !opp.impact || !opp.effort || !opp.priority) {
+        throw new Error(`Invalid opportunity structure at index ${index}`);
+      }
+
+      // Validate impact and effort values
+      if (!['High', 'Medium', 'Low'].includes(opp.impact)) {
+        throw new Error(`Invalid impact value at index ${index}: ${opp.impact}`);
+      }
+      if (!['High', 'Medium', 'Low'].includes(opp.effort)) {
+        throw new Error(`Invalid effort value at index ${index}: ${opp.effort}`);
+      }
+
+      // Validate priority score
+      const priority = parseInt(opp.priority);
+      if (isNaN(priority) || priority < 1 || priority > 10) {
+        throw new Error(`Invalid priority score at index ${index}: ${opp.priority}`);
+      }
+
+      return {
+        title: opp.title.trim(),
+        description: opp.description.trim(),
+        impact: opp.impact,
+        effort: opp.effort,
+        priority: priority
+      };
+    });
+
+    // Sort by priority (highest first)
+    validatedOpportunities.sort((a, b) => b.priority - a.priority);
+
+    return {
+      id: Date.now().toString(),
+      provider: provider,
+      model: model,
+      analysisDate: new Date().toISOString(),
+      opportunities: validatedOpportunities
+    };
+
+  } catch (error) {
+    console.error('Response processing error:', error);
+    throw new Error(`Failed to process AI response: ${error.message}`);
+  }
+};
 
 // Routes
 app.get('/', (req, res) => {
@@ -98,42 +260,36 @@ app.post('/api/analyze', upload.single('file'), async (req, res) => {
       });
     }
 
-    // TODO: Implement AI analysis logic here
-    // For now, return mock data
-    const mockAnalysis = {
-      id: Date.now().toString(),
-      provider: provider,
-      model: model,
-      analysisDate: new Date().toISOString(),
-      opportunities: [
-        {
-          title: "Customer Service Chatbot",
-          description: "Implement an AI-powered chatbot to handle customer inquiries 24/7, reducing response time and operational costs.",
-          impact: "High",
-          effort: "Medium",
-          priority: 8
-        },
-        {
-          title: "Predictive Analytics Dashboard",
-          description: "Deploy machine learning models to forecast business trends and customer behavior patterns.",
-          impact: "High",
-          effort: "High",
-          priority: 7
-        },
-        {
-          title: "Automated Document Processing",
-          description: "Use AI to extract and process information from documents, invoices, and forms automatically.",
-          impact: "Medium",
-          effort: "Medium",
-          priority: 6
-        }
-      ]
-    };
-
-    res.json(mockAnalysis);
+    // Analyze with selected AI provider
+    const aiResponse = await analyzeWithProvider(provider, model, apiKey, content);
+    
+    // Process and validate the AI response
+    const analysis = processAIResponse(aiResponse, provider, model);
+    
+    res.json(analysis);
 
   } catch (error) {
     console.error('Analysis error:', error);
+    
+    // Handle specific AI provider errors
+    if (error.message.includes('OpenAI API error')) {
+      return res.status(400).json({ 
+        error: 'OpenAI API error. Please check your API key and try again.' 
+      });
+    }
+    
+    if (error.message.includes('Gemini API error')) {
+      return res.status(400).json({ 
+        error: 'Google Gemini API error. Please check your API key and try again.' 
+      });
+    }
+    
+    if (error.message.includes('Failed to process AI response')) {
+      return res.status(500).json({ 
+        error: 'Failed to process AI response. Please try again.' 
+      });
+    }
+    
     res.status(500).json({ 
       error: 'Internal server error during analysis' 
     });
