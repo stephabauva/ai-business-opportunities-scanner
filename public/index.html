@@ -267,6 +267,37 @@
             box-shadow: none;
         }
 
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .clear-btn {
+            flex: 1;
+            padding: 18px;
+            background: var(--white);
+            color: var(--medium-gray);
+            border: 2px solid var(--medium-gray);
+            border-radius: 12px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            font-family: var(--font-primary);
+        }
+
+        .clear-btn:hover {
+            background: var(--light-gray);
+            border-color: var(--deep-purple);
+            color: var(--deep-purple);
+            transform: translateY(-2px);
+        }
+
+        .submit-btn {
+            flex: 2;
+        }
+
         .submit-btn.loading {
             position: relative;
             color: transparent;
@@ -1498,9 +1529,14 @@
                     </div>
                 </div>
 
-                <button type="submit" class="submit-btn" id="submitBtn" data-i18n="analyzeButton">
-                    Analyze Business Opportunities
-                </button>
+                <div class="button-group">
+                    <button type="button" class="clear-btn" id="clearBtn" onclick="clearForm()" data-i18n="clearButton">
+                        Clear / Effacer
+                    </button>
+                    <button type="submit" class="submit-btn" id="submitBtn" data-i18n="analyzeButton">
+                        Analyze Business Opportunities
+                    </button>
+                </div>
             </form>
         </div>
 
@@ -1635,6 +1671,7 @@
                 companyDescription: "Description de l'entreprise",
                 uploadDocument: "Télécharger le document de l'entreprise (Optionnel)",
                 analyzeButton: "Analyser les opportunités business",
+                clearButton: "Effacer",
                 
                 // Model Options
                 nanoTier: "{tierName} - Analyse rapide et économique",
@@ -1749,6 +1786,7 @@
                 companyDescription: "Company Description",
                 uploadDocument: "Upload Company Document (Optional)",
                 analyzeButton: "Analyze Business Opportunities",
+                clearButton: "Clear",
                 
                 // Model Options
                 nanoTier: "{tierName} - Fast, cost-effective analysis",
@@ -2527,6 +2565,31 @@
                 closeApiKeyModal();
             }
         });
+
+        // Clear form function
+        function clearForm() {
+            // Clear text inputs
+            document.getElementById('apiKey').value = '';
+            document.getElementById('companyDescription').value = '';
+            
+            // Reset file upload
+            document.getElementById('companyFile').value = '';
+            resetFileUpload();
+            
+            // Reset character counter
+            updateCharacterCounter(0);
+            
+            // Hide results and errors
+            document.getElementById('resultsContainer').style.display = 'none';
+            document.getElementById('errorMessage').style.display = 'none';
+            
+            // Reset provider to default (OpenAI)
+            selectProvider('openai');
+            
+            // Reset model tier to default
+            document.getElementById('modelTier').value = 'nano';
+            updateModelInfo();
+        }
 
         // Initialize when DOM is ready
         if (document.readyState === 'loading') {
