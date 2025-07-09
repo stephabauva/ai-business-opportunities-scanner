@@ -77,7 +77,7 @@ Analyze this company description and identify EXACTLY 4 specific AI implementati
 
 For each opportunity provide:
 - Title and brief description
-- Impact (High/Medium/Low) and Effort (High/Medium/Low) 
+- Impact (${language === 'fr' ? 'Élevé/Moyen/Faible' : 'High/Medium/Low'}) and Effort (${language === 'fr' ? 'Élevé/Moyen/Faible' : 'High/Medium/Low'})
 - Priority score (1-10)
 - Basic business case: problem, current state, AI solution, success metrics
 - Implementation: timeline, team size, budget estimate, main risks
@@ -90,8 +90,8 @@ IMPORTANT: Return ONLY a valid JSON array with this simplified structure:
   {
     "title": "Opportunity Title",
     "description": "Brief 2-3 sentence overview",
-    "impact": "High|Medium|Low",
-    "effort": "High|Medium|Low", 
+    "impact": "${language === 'fr' ? 'Élevé|Moyen|Faible' : 'High|Medium|Low'}",
+    "effort": "${language === 'fr' ? 'Élevé|Moyen|Faible' : 'High|Medium|Low'}", 
     "priority": 8,
     "businessCase": {
       "problemStatement": "What problem does this solve?",
@@ -156,8 +156,8 @@ IMPORTANT: Return ONLY a valid JSON array with the following structure. Do not i
   {
     "title": "Opportunity Title",
     "description": "Brief 2-3 sentence overview",
-    "impact": "High|Medium|Low",
-    "effort": "High|Medium|Low",
+    "impact": "${language === 'fr' ? 'Élevé|Moyen|Faible' : 'High|Medium|Low'}",
+    "effort": "${language === 'fr' ? 'Élevé|Moyen|Faible' : 'High|Medium|Low'}",
     "priority": 8,
     "businessCase": {
       "problemStatement": "What specific pain point does this solve?",
@@ -347,11 +347,12 @@ const processAIResponse = (responseText, provider, model, language = 'en') => {
         throw new Error(`Invalid opportunity structure at index ${index}`);
       }
 
-      // Validate impact and effort values
-      if (!['High', 'Medium', 'Low'].includes(opp.impact)) {
+      // Validate impact and effort values (support both English and French)
+      const validImpactEffort = ['High', 'Medium', 'Low', 'Élevé', 'Moyen', 'Faible'];
+      if (!validImpactEffort.includes(opp.impact)) {
         throw new Error(`Invalid impact value at index ${index}: ${opp.impact}`);
       }
-      if (!['High', 'Medium', 'Low'].includes(opp.effort)) {
+      if (!validImpactEffort.includes(opp.effort)) {
         throw new Error(`Invalid effort value at index ${index}: ${opp.effort}`);
       }
 
