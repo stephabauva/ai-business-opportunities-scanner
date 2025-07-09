@@ -754,13 +754,12 @@
 
         /* Character Counter */
         .character-counter {
-            position: absolute;
-            bottom: 8px;
-            right: 12px;
             font-size: var(--font-size-small);
             color: var(--medium-gray);
             font-weight: 500;
             transition: var(--transition-smooth);
+            text-align: right;
+            margin-top: 8px;
         }
 
         .character-counter.valid {
@@ -1149,11 +1148,6 @@
                 font-size: 1em;
             }
             
-            .character-counter {
-                position: static;
-                text-align: right;
-                margin-top: 8px;
-            }
             
             .input-container {
                 position: relative;
@@ -1284,7 +1278,8 @@
                     <label for="companyDescription">Company Description</label>
                     <div class="input-container">
                         <textarea class="input-field textarea-field" id="companyDescription" name="companyDescription" placeholder="Describe your company, its products, services, and current operations (minimum 100 characters)" required minlength="100"></textarea>
-                        <div class="character-counter" id="charCounter">0/100 characters</div>
+                    </div>
+                    <div class="character-counter" id="charCounter">0/1000 characters</div>
                     </div>
                 </div>
 
@@ -1433,11 +1428,11 @@
         document.getElementById('companyDescription').addEventListener('input', function(e) {
             const charCounter = document.getElementById('charCounter');
             const currentLength = e.target.value.length;
-            const minLength = 100;
+            const maxLength = 1000;
             
-            charCounter.textContent = `${currentLength}/${minLength} characters`;
+            charCounter.textContent = `${currentLength}/${maxLength} characters`;
             
-            if (currentLength >= minLength) {
+            if (currentLength <= maxLength) {
                 charCounter.classList.add('valid');
                 charCounter.classList.remove('invalid');
             } else {
