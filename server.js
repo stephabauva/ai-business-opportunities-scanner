@@ -326,13 +326,36 @@ const processAIResponse = (responseText, provider, model, language = 'en') => {
       console.log('JSON parse failed, attempting to fix common issues...');
       console.log('Original response:', responseText.substring(0, 500));
       
-      // Try to fix unescaped quotes in strings
-      let fixedResponse = cleanedResponse.replace(/(["])([^"]*?)(["])(\s*:\s*)(["])([^"]*?)([^\\])(")([^"]*?)(["])/g, '$1$2$3$4$5$6\\$7$8$9$10');
+      // Try simpler JSON fixes without problematic regex
+      let fixedResponse = cleanedResponse
+        .replace(/([^\\])"/g, '$1\\"')  // Escape unescaped quotes
+        .replace(/^"/, '\\"')          // Fix quotes at start
+        .replace(/\\"/g, '"')          // Remove double escaping
+        .replace(/\\\\"/g, '\\"');     // Fix triple escaping
       
       try {
         opportunities = JSON.parse(fixedResponse);
       } catch (secondParseError) {
-        throw new Error(`JSON parsing failed: ${parseError.message}. Response preview: ${cleanedResponse.substring(0, 200)}...`);
+        // If still failing, try a more robust approach
+        try {
+          // Remove all problematic characters and try again
+          let sanitizedResponse = cleanedResponse
+            .replace(/[\u0000-\u001F\u007F-\u009F]/g, '')  // Remove control characters
+            .replace(/\\n/g, ' ')                          // Replace escaped newlines
+            .replace(/\\\\/g, '\\')                        // Fix double backslashes
+            .replace(/\\"/g, '"')                          // Unescape quotes
+            .replace(/([^\\])"/g, '$1\\"')                 // Re-escape unescaped quotes
+            .replace(/^"/, '\\"');                         // Fix quotes at start
+          
+          opportunities = JSON.parse(sanitizedResponse);
+        } catch (thirdParseError) {
+          console.error('All JSON parsing attempts failed:', {
+            original: parseError.message,
+            second: secondParseError.message,
+            third: thirdParseError.message
+          });
+          throw new Error(`JSON parsing failed after multiple attempts. Response preview: ${cleanedResponse.substring(0, 200)}...`);
+        }
       }
     }
     
