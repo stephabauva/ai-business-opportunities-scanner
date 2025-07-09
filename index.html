@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -1217,6 +1217,55 @@
             }
         }
         
+        /* Language Switcher Styles */
+        .language-switcher {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 2px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 2px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .lang-btn {
+            padding: 6px 16px;
+            border: none;
+            background: transparent;
+            color: var(--medium-gray);
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 18px;
+            transition: all 0.3s ease;
+            font-family: var(--font-primary);
+        }
+
+        .lang-btn:hover {
+            color: var(--deep-purple);
+        }
+
+        .lang-btn.active {
+            background: var(--deep-purple);
+            color: white;
+            box-shadow: 0 2px 8px rgba(107, 91, 149, 0.3);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .language-switcher {
+                top: 10px;
+                right: 10px;
+            }
+            
+            .lang-btn {
+                padding: 4px 12px;
+                font-size: 12px;
+            }
+        }
+        
         /* Container optimizations */
         .container {
             contain: layout style;
@@ -1233,8 +1282,12 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>AI Business Opportunity Scanner</h1>
-            <p>Analyze your company and discover AI implementation opportunities with prioritized roadmaps</p>
+            <div class="language-switcher">
+                <button class="lang-btn active" data-lang="fr">FR</button>
+                <button class="lang-btn" data-lang="en">EN</button>
+            </div>
+            <h1 data-i18n="appTitle">AI Business Opportunity Scanner</h1>
+            <p data-i18n="appSubtitle">Analyze your company and discover AI implementation opportunities with prioritized roadmaps</p>
         </div>
 
         <div class="error-message" id="errorMessage"></div>
@@ -1242,7 +1295,7 @@
         <div class="form-container">
             <form id="analysisForm">
                 <div class="form-group">
-                    <label>Choose AI Provider</label>
+                    <label data-i18n="chooseProvider">Choose AI Provider</label>
                     <div class="provider-selection">
                         <div class="provider-option selected" onclick="selectProvider('openai')">
                             <input type="radio" name="provider" value="openai" checked>
@@ -1256,7 +1309,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="modelTier">Model Tier</label>
+                    <label for="modelTier" data-i18n="modelTier">Model Tier</label>
                     <select class="model-select" id="modelTier" name="modelTier">
                         <option value="nano">Nano - Fast, cost-effective analysis</option>
                         <option value="mini">Mini - Balanced performance</option>
@@ -1268,32 +1321,32 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="apiKey" id="apiKeyLabel">OpenAI API Key</label>
+                    <label for="apiKey" id="apiKeyLabel" data-i18n="apiKeyLabel" data-i18n-params='{"provider":"OpenAI"}'>OpenAI API Key</label>
                     <div class="input-container">
-                        <input type="password" class="input-field" id="apiKey" name="apiKey" placeholder="Enter your API key" required autocomplete="new-password" data-form-type="other" data-lpignore="true">
+                        <input type="password" class="input-field" id="apiKey" name="apiKey" data-i18n="apiKeyPlaceholder" placeholder="Enter your API key" required autocomplete="new-password" data-form-type="other" data-lpignore="true">
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label for="companyDescription">Company Description</label>
+                    <label for="companyDescription" data-i18n="companyDescription">Company Description</label>
                     <div class="input-container">
-                        <textarea class="input-field textarea-field" id="companyDescription" name="companyDescription" placeholder="Describe your company, its products, services, and current operations (minimum 100 characters)" required minlength="100"></textarea>
+                        <textarea class="input-field textarea-field" id="companyDescription" name="companyDescription" data-i18n="companyDescriptionPlaceholder" placeholder="Describe your company, its products, services, and current operations (minimum 100 characters)" required minlength="100"></textarea>
                     </div>
-                    <div class="character-counter" id="charCounter">0/1000 characters</div>
+                    <div class="character-counter" id="charCounter">0/1000 caractères</div>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label>Upload Company Document (Optional)</label>
+                    <label data-i18n="uploadDocument">Upload Company Document (Optional)</label>
                     <div class="file-upload">
                         <input type="file" id="companyFile" name="companyFile" accept=".txt,.pdf">
-                        <label for="companyFile" class="file-upload-label" id="fileLabel">
+                        <label for="companyFile" class="file-upload-label" id="fileLabel" data-i18n="fileUploadText">
                             Click to upload a company document (.txt, .pdf, max 5MB)
                         </label>
                     </div>
                 </div>
 
-                <button type="submit" class="submit-btn" id="submitBtn">
+                <button type="submit" class="submit-btn" id="submitBtn" data-i18n="analyzeButton">
                     Analyze Business Opportunities
                 </button>
             </form>
@@ -1301,7 +1354,7 @@
 
         <div class="skeleton-container" id="skeletonContainer">
             <div class="results-header">
-                <h2 class="results-title">Analyzing Your Business...</h2>
+                <h2 class="results-title" data-i18n="analyzing">Analyzing Your Business...</h2>
             </div>
             <div class="skeleton-card">
                 <div class="skeleton-header">
@@ -1346,8 +1399,8 @@
 
         <div class="results-container" id="resultsContainer">
             <div class="results-header">
-                <h2 class="results-title">AI Implementation Opportunities</h2>
-                <button class="download-btn" id="downloadBtn">
+                <h2 class="results-title" data-i18n="resultsTitle">AI Implementation Opportunities</h2>
+                <button class="download-btn" id="downloadBtn" data-i18n="downloadReport">
                     Download PDF Report
                 </button>
             </div>
@@ -1358,6 +1411,203 @@
     <script>
         let currentProvider = 'openai';
         let analysisId = null;
+        
+        // Language management
+        let currentLanguage = localStorage.getItem('language') || 'fr';
+        
+        // Translation object
+        const translations = {
+            fr: {
+                // Header
+                appTitle: "Scanner d'Opportunités Business IA",
+                appSubtitle: "Analysez votre entreprise et découvrez des opportunités d'implémentation IA avec des feuilles de route priorisées",
+                
+                // Form Labels
+                chooseProvider: "Choisir le fournisseur IA",
+                modelTier: "Niveau du modèle",
+                apiKeyLabel: "Clé API {provider}",
+                companyDescription: "Description de l'entreprise",
+                uploadDocument: "Télécharger le document de l'entreprise (Optionnel)",
+                analyzeButton: "Analyser les opportunités business",
+                
+                // Model Options
+                nanoTier: "{tierName} - Analyse rapide et économique",
+                miniTier: "{tierName} - Performance équilibrée",
+                standardTier: "{tierName} - Analyse la plus complète",
+                
+                // Results
+                resultsTitle: "Opportunités d'implémentation IA",
+                downloadReport: "Télécharger le rapport PDF",
+                priority: "Priorité",
+                impact: "Impact",
+                effort: "Effort",
+                
+                // Metrics
+                high: "Élevé",
+                medium: "Moyen",
+                low: "Faible",
+                
+                // Messages
+                analyzing: "Analyse de votre entreprise...",
+                errorMessage: "Une erreur s'est produite lors de l'analyse",
+                fileUploadText: "Cliquez pour télécharger un document d'entreprise (.txt, .pdf, max 5MB)",
+                fileSelected: "Sélectionné: {filename}",
+                characterCount: "{count}/1000 caractères",
+                
+                // Validation
+                apiKeyRequired: "La clé API est requise",
+                descriptionRequired: "La description de l'entreprise est requise",
+                descriptionMinLength: "La description de l'entreprise doit contenir au moins 100 caractères",
+                fileSizeError: "La taille du fichier doit être inférieure à 5MB",
+                fileTypeError: "Seuls les fichiers .txt et .pdf sont autorisés",
+                
+                // Placeholders
+                apiKeyPlaceholder: "Entrez votre clé API",
+                companyDescriptionPlaceholder: "Décrivez votre entreprise, ses produits, services et opérations actuelles (minimum 100 caractères)"
+            },
+            en: {
+                // Header
+                appTitle: "AI Business Opportunity Scanner",
+                appSubtitle: "Analyze your company and discover AI implementation opportunities with prioritized roadmaps",
+                
+                // Form Labels
+                chooseProvider: "Choose AI Provider",
+                modelTier: "Model Tier",
+                apiKeyLabel: "{provider} API Key",
+                companyDescription: "Company Description",
+                uploadDocument: "Upload Company Document (Optional)",
+                analyzeButton: "Analyze Business Opportunities",
+                
+                // Model Options
+                nanoTier: "{tierName} - Fast, cost-effective analysis",
+                miniTier: "{tierName} - Balanced performance",
+                standardTier: "{tierName} - Most comprehensive analysis",
+                
+                // Results
+                resultsTitle: "AI Implementation Opportunities",
+                downloadReport: "Download PDF Report",
+                priority: "Priority",
+                impact: "Impact",
+                effort: "Effort",
+                
+                // Metrics
+                high: "High",
+                medium: "Medium",
+                low: "Low",
+                
+                // Messages
+                analyzing: "Analyzing Your Business...",
+                errorMessage: "An error occurred during analysis",
+                fileUploadText: "Click to upload a company document (.txt, .pdf, max 5MB)",
+                fileSelected: "Selected: {filename}",
+                characterCount: "{count}/1000 characters",
+                
+                // Validation
+                apiKeyRequired: "API key is required",
+                descriptionRequired: "Company description is required",
+                descriptionMinLength: "Company description must be at least 100 characters long",
+                fileSizeError: "File size must be less than 5MB",
+                fileTypeError: "Only .txt and .pdf files are allowed",
+                
+                // Placeholders
+                apiKeyPlaceholder: "Enter your API key",
+                companyDescriptionPlaceholder: "Describe your company, its products, services, and current operations (minimum 100 characters)"
+            }
+        };
+        
+        // Translation function
+        function t(key, params = {}) {
+            let text = translations[currentLanguage][key] || translations['en'][key] || key;
+            
+            // Replace parameters
+            Object.keys(params).forEach(param => {
+                text = text.replace(`{${param}}`, params[param]);
+            });
+            
+            return text;
+        }
+
+        // Apply translations to DOM
+        function applyTranslations() {
+            // Update all elements with data-i18n attribute
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                const params = JSON.parse(element.getAttribute('data-i18n-params') || '{}');
+                
+                if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+                    element.placeholder = t(key, params);
+                } else if (element.tagName === 'OPTION') {
+                    element.textContent = t(key, params);
+                } else {
+                    element.textContent = t(key, params);
+                }
+            });
+            
+            // Update document language
+            document.documentElement.lang = currentLanguage;
+            
+            // Update dynamic content
+            updateDynamicTranslations();
+        }
+
+        // Language switcher handler
+        function switchLanguage(lang) {
+            currentLanguage = lang;
+            localStorage.setItem('language', lang);
+            
+            // Update button states
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+            });
+            
+            // Apply translations
+            applyTranslations();
+        }
+        
+        // Update dynamic content that depends on current state
+        function updateDynamicTranslations() {
+            // Update API key label based on current provider
+            const apiKeyLabel = document.getElementById('apiKeyLabel');
+            if (apiKeyLabel) {
+                const provider = currentProvider === 'openai' ? 'OpenAI' : 'Google Gemini';
+                apiKeyLabel.textContent = t('apiKeyLabel', { provider });
+            }
+            
+            // Update model tier options
+            updateModelTierOptions();
+            
+            // Update model info
+            updateModelInfo();
+            
+            // Update character counter
+            const companyDesc = document.getElementById('companyDescription');
+            if (companyDesc) {
+                updateCharacterCounter(companyDesc.value.length);
+            }
+            
+            // Update file upload label if no file selected
+            const fileUploadLabel = document.getElementById('fileLabel');
+            if (fileUploadLabel && !fileUploadLabel.classList.contains('has-file')) {
+                fileUploadLabel.textContent = t('fileUploadText');
+            }
+        }
+        
+        // Update character counter with translation
+        function updateCharacterCounter(currentLength) {
+            const charCounter = document.getElementById('charCounter');
+            if (charCounter) {
+                charCounter.textContent = t('characterCount', { count: currentLength });
+                
+                const maxLength = 1000;
+                if (currentLength <= maxLength) {
+                    charCounter.classList.add('valid');
+                    charCounter.classList.remove('invalid');
+                } else {
+                    charCounter.classList.add('invalid');
+                    charCounter.classList.remove('valid');
+                }
+            }
+        }
 
         // Provider selection
         function selectProvider(provider) {
@@ -1391,15 +1641,15 @@
             
             if (currentProvider === 'openai') {
                 modelTierSelect.innerHTML = `
-                    <option value="nano">Nano - Fast, cost-effective analysis</option>
-                    <option value="mini">Mini - Balanced performance</option>
-                    <option value="standard">Standard - Most comprehensive analysis</option>
+                    <option value="nano" data-i18n="nanoTier" data-i18n-params='{"tierName":"Nano"}'>${t('nanoTier', {tierName: 'Nano'})}</option>
+                    <option value="mini" data-i18n="miniTier" data-i18n-params='{"tierName":"Mini"}'>${t('miniTier', {tierName: 'Mini'})}</option>
+                    <option value="standard" data-i18n="standardTier" data-i18n-params='{"tierName":"Standard"}'>${t('standardTier', {tierName: 'Standard'})}</option>
                 `;
             } else {
                 modelTierSelect.innerHTML = `
-                    <option value="nano">Lite - Fast, cost-effective analysis</option>
-                    <option value="mini">Flash - Balanced performance</option>
-                    <option value="standard">Pro - Most comprehensive analysis</option>
+                    <option value="nano" data-i18n="nanoTier" data-i18n-params='{"tierName":"Lite"}'>${t('nanoTier', {tierName: 'Lite'})}</option>
+                    <option value="mini" data-i18n="miniTier" data-i18n-params='{"tierName":"Flash"}'>${t('miniTier', {tierName: 'Flash'})}</option>
+                    <option value="standard" data-i18n="standardTier" data-i18n-params='{"tierName":"Pro"}'>${t('standardTier', {tierName: 'Pro'})}</option>
                 `;
             }
         }
@@ -1426,19 +1676,7 @@
 
         // Character counter functionality
         document.getElementById('companyDescription').addEventListener('input', function(e) {
-            const charCounter = document.getElementById('charCounter');
-            const currentLength = e.target.value.length;
-            const maxLength = 1000;
-            
-            charCounter.textContent = `${currentLength}/${maxLength} characters`;
-            
-            if (currentLength <= maxLength) {
-                charCounter.classList.add('valid');
-                charCounter.classList.remove('invalid');
-            } else {
-                charCounter.classList.add('invalid');
-                charCounter.classList.remove('valid');
-            }
+            updateCharacterCounter(e.target.value.length);
         });
 
         // File upload handling with drag and drop
@@ -1478,7 +1716,7 @@
         function handleFileSelection(file) {
             // Check file size (5MB limit)
             if (file.size > 5 * 1024 * 1024) {
-                showError('File size must be less than 5MB');
+                showError(t('fileSizeError'));
                 resetFileUpload();
                 return;
             }
@@ -1486,7 +1724,7 @@
             // Check file type
             const allowedTypes = ['text/plain', 'application/pdf'];
             if (!allowedTypes.includes(file.type)) {
-                showError('Only .txt and .pdf files are allowed');
+                showError(t('fileTypeError'));
                 resetFileUpload();
                 return;
             }
@@ -1494,13 +1732,13 @@
             // Show success with animation
             fileUploadLabel.innerHTML = `
                 <div class="success-checkmark"></div>
-                Selected: ${file.name}
+                ${t('fileSelected', {filename: file.name})}
             `;
             fileUploadLabel.classList.add('has-file');
         }
         
         function resetFileUpload() {
-            fileUploadLabel.textContent = 'Click to upload a company document (.txt, .pdf, max 5MB)';
+            fileUploadLabel.textContent = t('fileUploadText');
             fileUploadLabel.classList.remove('has-file');
             fileInput.value = '';
         }
@@ -1577,17 +1815,17 @@
             const companyDescription = document.getElementById('companyDescription').value.trim();
             
             if (!apiKey) {
-                showError('API key is required');
+                showError(t('apiKeyRequired'));
                 return false;
             }
             
             if (!companyDescription) {
-                showError('Company description is required');
+                showError(t('descriptionRequired'));
                 return false;
             }
             
             if (companyDescription.length < 100) {
-                showError('Company description must be at least 100 characters long');
+                showError(t('descriptionMinLength'));
                 return false;
             }
             
@@ -1882,9 +2120,35 @@
             }
         });
 
-        // Initialize
-        updateModelTierOptions();
-        updateModelInfo();
+        // Add language switcher event handlers
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const lang = this.getAttribute('data-lang');
+                switchLanguage(lang);
+            });
+        });
+
+        // Initialize application
+        function initializeApp() {
+            // Set initial language button state
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.getAttribute('data-lang') === currentLanguage);
+            });
+            
+            // Apply initial translations
+            applyTranslations();
+            
+            // Initialize other components
+            updateModelTierOptions();
+            updateModelInfo();
+        }
+
+        // Initialize when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeApp);
+        } else {
+            initializeApp();
+        }
     </script>
 </body>
 </html>
