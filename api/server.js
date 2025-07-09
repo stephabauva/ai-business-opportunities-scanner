@@ -22,10 +22,10 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// File upload configuration
+// File upload configuration - use /tmp for Vercel serverless
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'uploads/');
+    cb(null, '/tmp/');
   },
   filename: function (req, file, cb) {
     cb(null, Date.now() + '-' + file.originalname);
@@ -649,7 +649,7 @@ const generatePDF = (analysisData, companyDescription, language = 'en') => {
     try {
       const doc = new PDFDocument({ margin: 50 });
       const filename = `analysis-${analysisData.id}.pdf`;
-      const filepath = path.join(__dirname, 'uploads', filename);
+      const filepath = path.join('/tmp', filename);
       
       // Pipe the PDF into a file
       doc.pipe(fs.createWriteStream(filepath));
