@@ -5,6 +5,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Business Opportunity Scanner</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            /* Primary Colors */
+            --soft-lavender: #E6E0F8;
+            --muted-pink: #F5D5E0;
+            --warm-beige: #F4E8DC;
+            --deep-purple: #6B5B95;
+            
+            /* Neutral Colors */
+            --charcoal: #2C2C2C;
+            --medium-gray: #666666;
+            --light-gray: #F5F5F5;
+            --white: #FFFFFF;
+            
+            /* Accent Colors */
+            --success-green: #4CAF50;
+            --warning-orange: #FF9800;
+            --error-red: #F44336;
+            
+            /* Typography */
+            --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-size-hero: 3rem;
+            --font-size-section: 2rem;
+            --font-size-card: 1.5rem;
+            --font-size-body: 1rem;
+            --font-size-small: 0.875rem;
+            
+            /* Transitions */
+            --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
         * {
             margin: 0;
             padding: 0;
@@ -12,10 +44,10 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: var(--font-primary);
             line-height: 1.6;
-            color: #333;
-            background-color: #f5f5f5;
+            color: var(--charcoal);
+            background-color: var(--light-gray);
         }
 
         .container {
@@ -27,29 +59,50 @@
         .header {
             text-align: center;
             margin-bottom: 30px;
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            background: linear-gradient(135deg, var(--soft-lavender) 0%, var(--muted-pink) 100%);
+            padding: 40px;
+            border-radius: 0 0 20px 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+            pointer-events: none;
         }
 
         .header h1 {
-            color: #2c3e50;
-            margin-bottom: 10px;
-            font-size: 2.5em;
+            color: var(--deep-purple);
+            margin-bottom: 15px;
+            font-size: var(--font-size-hero);
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            position: relative;
+            z-index: 1;
         }
 
         .header p {
-            color: #7f8c8d;
-            font-size: 1.1em;
+            color: var(--medium-gray);
+            font-size: 1.2em;
+            font-weight: 400;
+            position: relative;
+            z-index: 1;
         }
 
         .form-container {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            background: var(--white);
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
             margin-bottom: 20px;
+            border: 1px solid rgba(230, 224, 248, 0.3);
         }
 
         .form-group {
@@ -58,9 +111,10 @@
 
         .form-group label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
             font-weight: 600;
-            color: #34495e;
+            color: var(--deep-purple);
+            font-size: var(--font-size-body);
         }
 
         .provider-selection {
@@ -72,22 +126,27 @@
         .provider-option {
             display: flex;
             align-items: center;
-            gap: 8px;
-            padding: 10px 15px;
-            border: 2px solid #e1e8ed;
-            border-radius: 8px;
+            gap: 10px;
+            padding: 16px 20px;
+            border: 2px solid var(--soft-lavender);
+            border-radius: 12px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: var(--transition-smooth);
+            background: var(--white);
+            font-weight: 500;
         }
 
         .provider-option:hover {
-            border-color: #3498db;
-            background-color: #f8f9fa;
+            border-color: var(--deep-purple);
+            background: linear-gradient(135deg, var(--soft-lavender) 0%, var(--muted-pink) 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(107, 91, 149, 0.15);
         }
 
         .provider-option.selected {
-            border-color: #3498db;
-            background-color: #ebf3fd;
+            border-color: var(--deep-purple);
+            background: linear-gradient(135deg, var(--soft-lavender) 0%, var(--muted-pink) 100%);
+            box-shadow: 0 4px 15px rgba(107, 91, 149, 0.2);
         }
 
         .provider-option input[type="radio"] {
@@ -96,38 +155,45 @@
 
         .model-select {
             width: 100%;
-            padding: 12px;
-            border: 2px solid #e1e8ed;
-            border-radius: 8px;
-            font-size: 16px;
-            background: white;
-            transition: border-color 0.3s ease;
+            padding: 16px;
+            border: 2px solid var(--soft-lavender);
+            border-radius: 12px;
+            font-size: var(--font-size-body);
+            background: var(--white);
+            transition: var(--transition-smooth);
+            font-family: var(--font-primary);
+            font-weight: 500;
         }
 
         .model-select:focus {
             outline: none;
-            border-color: #3498db;
+            border-color: var(--deep-purple);
+            box-shadow: 0 0 0 3px rgba(107, 91, 149, 0.1);
         }
 
         .model-info {
-            font-size: 14px;
-            color: #7f8c8d;
-            margin-top: 5px;
+            font-size: var(--font-size-small);
+            color: var(--medium-gray);
+            margin-top: 8px;
+            font-weight: 400;
         }
 
         .input-field {
             width: 100%;
-            padding: 12px;
-            border: 2px solid #e1e8ed;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: border-color 0.3s ease;
-            font-family: inherit;
+            padding: 16px;
+            border: 2px solid var(--soft-lavender);
+            border-radius: 12px;
+            font-size: var(--font-size-body);
+            transition: var(--transition-smooth);
+            font-family: var(--font-primary);
+            background: var(--white);
+            font-weight: 400;
         }
 
         .input-field:focus {
             outline: none;
-            border-color: #3498db;
+            border-color: var(--deep-purple);
+            box-shadow: 0 0 0 3px rgba(107, 91, 149, 0.1);
         }
 
         .textarea-field {
@@ -148,45 +214,54 @@
 
         .file-upload-label {
             display: block;
-            padding: 12px;
-            border: 2px dashed #e1e8ed;
-            border-radius: 8px;
+            padding: 20px;
+            border: 2px dashed var(--soft-lavender);
+            border-radius: 12px;
             text-align: center;
             cursor: pointer;
-            transition: all 0.3s ease;
-            background: #f8f9fa;
+            transition: var(--transition-smooth);
+            background: var(--light-gray);
+            font-weight: 500;
+            color: var(--medium-gray);
         }
 
         .file-upload-label:hover {
-            border-color: #3498db;
-            background: #ebf3fd;
+            border-color: var(--deep-purple);
+            background: var(--soft-lavender);
+            transform: translateY(-2px);
         }
 
         .file-upload-label.has-file {
-            border-color: #27ae60;
-            background: #f0f8f0;
+            border-color: var(--success-green);
+            background: rgba(76, 175, 80, 0.1);
+            color: var(--success-green);
         }
 
         .submit-btn {
             width: 100%;
-            padding: 15px;
-            background: #3498db;
-            color: white;
+            padding: 18px;
+            background: linear-gradient(135deg, var(--deep-purple) 0%, #8B7AB8 100%);
+            color: var(--white);
             border: none;
-            border-radius: 8px;
-            font-size: 18px;
+            border-radius: 12px;
+            font-size: 1.1em;
             font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            transition: var(--transition-smooth);
+            box-shadow: 0 4px 15px rgba(107, 91, 149, 0.2);
+            font-family: var(--font-primary);
         }
 
         .submit-btn:hover {
-            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(107, 91, 149, 0.3);
         }
 
         .submit-btn:disabled {
-            background: #bdc3c7;
+            background: var(--medium-gray);
             cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
         }
 
         .submit-btn.loading {
@@ -214,59 +289,72 @@
         }
 
         .error-message {
-            background: #e74c3c;
-            color: white;
-            padding: 15px;
-            border-radius: 8px;
+            background: var(--error-red);
+            color: var(--white);
+            padding: 16px;
+            border-radius: 12px;
             margin-bottom: 20px;
             display: none;
+            font-weight: 500;
         }
 
         .results-container {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            background: var(--white);
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
             margin-top: 20px;
             display: none;
+            border: 1px solid rgba(230, 224, 248, 0.3);
         }
 
         .results-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #e1e8ed;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--soft-lavender);
         }
 
         .results-title {
-            font-size: 1.5em;
-            color: #2c3e50;
+            font-size: var(--font-size-section);
+            color: var(--deep-purple);
             margin: 0;
+            font-weight: 600;
         }
 
         .download-btn {
-            background: #27ae60;
-            color: white;
+            background: linear-gradient(135deg, var(--success-green) 0%, #66BB6A 100%);
+            color: var(--white);
             border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
+            padding: 12px 24px;
+            border-radius: 12px;
             font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            transition: var(--transition-smooth);
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.2);
+            font-family: var(--font-primary);
         }
 
         .download-btn:hover {
-            background: #219a52;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.3);
         }
 
         .opportunity {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 8px;
+            background: var(--white);
+            padding: 24px;
+            border-radius: 16px;
             margin-bottom: 20px;
-            border-left: 4px solid #3498db;
+            border: 1px solid rgba(230, 224, 248, 0.3);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: var(--transition-smooth);
+        }
+        
+        .opportunity:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
         }
 
         .opportunity:last-child {
@@ -281,25 +369,26 @@
         }
 
         .opportunity-title {
-            font-size: 1.2em;
+            font-size: var(--font-size-card);
             font-weight: 600;
-            color: #2c3e50;
+            color: var(--deep-purple);
             margin: 0;
         }
 
         .opportunity-priority {
-            background: #3498db;
-            color: white;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 0.9em;
+            background: linear-gradient(135deg, var(--deep-purple) 0%, #8B7AB8 100%);
+            color: var(--white);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: var(--font-size-small);
             font-weight: 600;
         }
 
         .opportunity-description {
-            color: #555;
-            margin: 10px 0;
+            color: var(--medium-gray);
+            margin: 15px 0;
             line-height: 1.6;
+            font-weight: 400;
         }
 
         .opportunity-metrics {
@@ -317,29 +406,29 @@
 
         .metric-label {
             font-weight: 600;
-            color: #7f8c8d;
+            color: var(--medium-gray);
         }
 
         .metric-value {
-            padding: 2px 8px;
-            border-radius: 4px;
+            padding: 4px 12px;
+            border-radius: 20px;
             font-weight: 600;
-            font-size: 0.8em;
+            font-size: var(--font-size-small);
         }
 
         .metric-high {
-            background: #e74c3c;
-            color: white;
+            background: var(--error-red);
+            color: var(--white);
         }
 
         .metric-medium {
-            background: #f39c12;
-            color: white;
+            background: var(--warning-orange);
+            color: var(--white);
         }
 
         .metric-low {
-            background: #27ae60;
-            color: white;
+            background: var(--success-green);
+            color: var(--white);
         }
 
         @media (max-width: 768px) {
