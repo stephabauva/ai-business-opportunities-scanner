@@ -47,7 +47,9 @@
             font-family: var(--font-primary);
             line-height: 1.6;
             color: var(--charcoal);
-            background-color: var(--light-gray);
+            background: linear-gradient(135deg, var(--light-gray) 0%, #f8f9fa 50%, var(--soft-lavender) 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
         }
 
         .container {
@@ -97,12 +99,13 @@
         }
 
         .form-container {
-            background: var(--white);
+            background: linear-gradient(135deg, var(--white) 0%, rgba(246, 243, 253, 0.6) 100%);
             padding: 40px;
             border-radius: 16px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
             margin-bottom: 20px;
             border: 1px solid rgba(230, 224, 248, 0.3);
+            backdrop-filter: blur(10px);
         }
 
         .form-group {
@@ -281,22 +284,29 @@
             border-top: 2px solid transparent;
             border-radius: 50%;
             animation: spin 1s linear infinite;
+            will-change: transform;
+            transform: translateZ(0);
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% { 
+                transform: rotate(0deg);
+            }
+            100% { 
+                transform: rotate(360deg);
+            }
         }
 
         /* Skeleton Loading Animations */
         .skeleton-container {
-            background: var(--white);
+            background: linear-gradient(135deg, var(--white) 0%, rgba(246, 243, 253, 0.6) 100%);
             padding: 40px;
             border-radius: 16px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
             margin-top: 20px;
             display: none;
             border: 1px solid rgba(230, 224, 248, 0.3);
+            backdrop-filter: blur(10px);
         }
 
         .skeleton-card {
@@ -317,11 +327,17 @@
             height: 100%;
             background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
             animation: shimmer 2s infinite;
+            will-change: transform;
+            transform: translateZ(0);
         }
 
         @keyframes shimmer {
-            0% { left: -100%; }
-            100% { left: 100%; }
+            0% { 
+                transform: translate3d(-100%, 0, 0);
+            }
+            100% { 
+                transform: translate3d(100%, 0, 0);
+            }
         }
 
         .skeleton-header {
@@ -423,11 +439,17 @@
             bottom: 0;
             background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
             animation: progress-shine 2s infinite;
+            will-change: transform;
+            transform: translateZ(0);
         }
 
         @keyframes progress-shine {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
+            0% { 
+                transform: translate3d(-100%, 0, 0);
+            }
+            100% { 
+                transform: translate3d(100%, 0, 0);
+            }
         }
 
         .progress-fill.high {
@@ -503,15 +525,175 @@
             box-shadow: 0 2px 8px rgba(107, 91, 149, 0.3);
         }
 
-        /* Staggered Animation for Cards */
+        /* Enhanced Card Animations */
         .opportunity-card-enter {
-            animation: cardFadeIn 0.6s ease-out forwards;
+            animation: cardFadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
         }
 
         @keyframes cardFadeIn {
             from {
                 opacity: 0;
-                transform: translateY(30px);
+                transform: translateY(40px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .opportunity:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Page Transition Animations */
+        .form-container {
+            animation: slideInFromLeft 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        @keyframes slideInFromLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .results-container {
+            animation: slideInFromRight 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        @keyframes slideInFromRight {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Header Animation */
+        .header {
+            animation: headerFadeIn 1s ease-out forwards;
+        }
+
+        @keyframes headerFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Floating Animation for Priority Badges */
+        .opportunity-priority-enhanced {
+            animation: floatBadge 3s ease-in-out infinite;
+        }
+
+        @keyframes floatBadge {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-3px);
+            }
+        }
+
+        /* Pulse Animation for Progress Bars */
+        .progress-fill {
+            animation: progressPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes progressPulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.8;
+            }
+        }
+
+        /* Shake Animation for Errors */
+        .error-shake {
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% {
+                transform: translateX(0);
+            }
+            25% {
+                transform: translateX(-5px);
+            }
+            75% {
+                transform: translateX(5px);
+            }
+        }
+
+        /* Glow Effect for Focus States */
+        .input-field:focus, .model-select:focus {
+            box-shadow: 0 0 0 3px rgba(107, 91, 149, 0.1), 0 0 20px rgba(107, 91, 149, 0.2);
+        }
+
+        /* Rotate Animation for Icons */
+        .opportunity-icon {
+            transition: transform 0.3s ease;
+        }
+
+        .opportunity:hover .opportunity-icon {
+            transform: rotate(10deg) scale(1.1);
+        }
+
+        /* Morphing Button Animation */
+        .submit-btn {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .submit-btn:hover::before {
+            left: 100%;
+        }
+
+        /* Staggered Skeleton Animation */
+        .skeleton-card:nth-child(1) {
+            animation-delay: 0s;
+        }
+
+        .skeleton-card:nth-child(2) {
+            animation-delay: 0.1s;
+        }
+
+        .skeleton-card:nth-child(3) {
+            animation-delay: 0.2s;
+        }
+
+        .skeleton-card {
+            animation: skeletonSlideIn 0.6s ease-out forwards;
+        }
+
+        @keyframes skeletonSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
             }
             to {
                 opacity: 1;
@@ -702,13 +884,14 @@
         }
 
         .results-container {
-            background: var(--white);
+            background: linear-gradient(135deg, var(--white) 0%, rgba(246, 243, 253, 0.6) 100%);
             padding: 40px;
             border-radius: 16px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
             margin-top: 20px;
             display: none;
             border: 1px solid rgba(230, 224, 248, 0.3);
+            backdrop-filter: blur(10px);
         }
 
         .results-header {
@@ -746,19 +929,16 @@
         }
 
         .opportunity {
-            background: var(--white);
+            background: linear-gradient(135deg, var(--white) 0%, rgba(250, 248, 255, 0.8) 100%);
             padding: 24px;
             border-radius: 16px;
             margin-bottom: 20px;
             border: 1px solid rgba(230, 224, 248, 0.3);
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
             transition: var(--transition-smooth);
+            backdrop-filter: blur(5px);
         }
         
-        .opportunity:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
-        }
 
         .opportunity:last-child {
             margin-bottom: 0;
@@ -1022,6 +1202,37 @@
             .progress-value {
                 font-size: 0.8em;
             }
+        }
+        
+        /* Performance optimizations */
+        .opportunity-card-enter,
+        .skeleton-card,
+        .header,
+        .form-container,
+        .results-container {
+            transform: translateZ(0);
+            backface-visibility: hidden;
+        }
+        
+        /* Reduce motion for users who prefer it */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+        
+        /* Container optimizations */
+        .container {
+            contain: layout style;
+        }
+        
+        .opportunity,
+        .skeleton-card,
+        .form-container,
+        .results-container {
+            contain: layout style paint;
         }
     </style>
 </head>
@@ -1436,35 +1647,199 @@
             resultsContainer.scrollIntoView({ behavior: 'smooth' });
         }
         
-        // Get opportunity icon based on title keywords
+        // Comprehensive icon library with enhanced matching
         function getOpportunityIcon(title) {
             const titleLower = title.toLowerCase();
-            if (titleLower.includes('chatbot') || titleLower.includes('chat')) return '💬';
-            if (titleLower.includes('automation') || titleLower.includes('workflow')) return '⚙️';
-            if (titleLower.includes('analytics') || titleLower.includes('data')) return '📊';
-            if (titleLower.includes('personalization') || titleLower.includes('recommendation')) return '👤';
-            if (titleLower.includes('fraud') || titleLower.includes('security')) return '🔒';
-            if (titleLower.includes('inventory') || titleLower.includes('supply')) return '📦';
-            if (titleLower.includes('marketing') || titleLower.includes('content')) return '📈';
-            if (titleLower.includes('support') || titleLower.includes('service')) return '🎧';
-            if (titleLower.includes('prediction') || titleLower.includes('forecast')) return '🔮';
-            if (titleLower.includes('optimization') || titleLower.includes('improve')) return '🎯';
-            return '🚀'; // Default icon
+            
+            // Customer Service & Communication
+            if (titleLower.includes('chatbot') || titleLower.includes('chat') || titleLower.includes('assistant')) return '💬';
+            if (titleLower.includes('voice') || titleLower.includes('speech') || titleLower.includes('audio')) return '🎤';
+            if (titleLower.includes('support') || titleLower.includes('help') || titleLower.includes('ticket')) return '🎧';
+            if (titleLower.includes('email') || titleLower.includes('message') || titleLower.includes('notification')) return '📧';
+            
+            // Automation & Workflow
+            if (titleLower.includes('automation') || titleLower.includes('workflow') || titleLower.includes('process')) return '⚙️';
+            if (titleLower.includes('robot') || titleLower.includes('rpa') || titleLower.includes('robotic')) return '🤖';
+            if (titleLower.includes('scheduling') || titleLower.includes('calendar') || titleLower.includes('time')) return '⏰';
+            if (titleLower.includes('pipeline') || titleLower.includes('cicd') || titleLower.includes('deploy')) return '🔄';
+            
+            // Data & Analytics
+            if (titleLower.includes('analytics') || titleLower.includes('data') || titleLower.includes('insight')) return '📊';
+            if (titleLower.includes('dashboard') || titleLower.includes('reporting') || titleLower.includes('report')) return '📈';
+            if (titleLower.includes('visualization') || titleLower.includes('chart') || titleLower.includes('graph')) return '📉';
+            if (titleLower.includes('mining') || titleLower.includes('etl') || titleLower.includes('warehouse')) return '🗃️';
+            if (titleLower.includes('business intelligence') || titleLower.includes('bi') || titleLower.includes('kpi')) return '🧠';
+            
+            // Machine Learning & AI
+            if (titleLower.includes('machine learning') || titleLower.includes('ml') || titleLower.includes('model')) return '🧠';
+            if (titleLower.includes('neural') || titleLower.includes('deep learning') || titleLower.includes('ai')) return '🤯';
+            if (titleLower.includes('computer vision') || titleLower.includes('image') || titleLower.includes('visual')) return '👁️';
+            if (titleLower.includes('nlp') || titleLower.includes('natural language') || titleLower.includes('text')) return '📝';
+            
+            // Personalization & Recommendations
+            if (titleLower.includes('personalization') || titleLower.includes('recommendation') || titleLower.includes('suggest')) return '👤';
+            if (titleLower.includes('targeting') || titleLower.includes('segment') || titleLower.includes('profile')) return '🎯';
+            if (titleLower.includes('preference') || titleLower.includes('taste') || titleLower.includes('like')) return '❤️';
+            
+            // Security & Fraud
+            if (titleLower.includes('fraud') || titleLower.includes('security') || titleLower.includes('detect')) return '🔒';
+            if (titleLower.includes('anomaly') || titleLower.includes('unusual') || titleLower.includes('suspicious')) return '🚨';
+            if (titleLower.includes('threat') || titleLower.includes('risk') || titleLower.includes('vulnerability')) return '🛡️';
+            if (titleLower.includes('compliance') || titleLower.includes('audit') || titleLower.includes('regulation')) return '📋';
+            
+            // Operations & Supply Chain
+            if (titleLower.includes('inventory') || titleLower.includes('supply') || titleLower.includes('stock')) return '📦';
+            if (titleLower.includes('logistics') || titleLower.includes('shipping') || titleLower.includes('delivery')) return '🚚';
+            if (titleLower.includes('procurement') || titleLower.includes('purchasing') || titleLower.includes('vendor')) return '🛒';
+            if (titleLower.includes('manufacturing') || titleLower.includes('production') || titleLower.includes('factory')) return '🏭';
+            
+            // Marketing & Sales
+            if (titleLower.includes('marketing') || titleLower.includes('campaign') || titleLower.includes('promotion')) return '📈';
+            if (titleLower.includes('content') || titleLower.includes('blog') || titleLower.includes('article')) return '📄';
+            if (titleLower.includes('social') || titleLower.includes('media') || titleLower.includes('influence')) return '📱';
+            if (titleLower.includes('sales') || titleLower.includes('lead') || titleLower.includes('conversion')) return '💰';
+            if (titleLower.includes('seo') || titleLower.includes('search') || titleLower.includes('ranking')) return '🔍';
+            
+            // Prediction & Forecasting
+            if (titleLower.includes('prediction') || titleLower.includes('forecast') || titleLower.includes('predict')) return '🔮';
+            if (titleLower.includes('trend') || titleLower.includes('pattern') || titleLower.includes('seasonal')) return '📊';
+            if (titleLower.includes('demand') || titleLower.includes('planning') || titleLower.includes('capacity')) return '📋';
+            
+            // Optimization & Performance
+            if (titleLower.includes('optimization') || titleLower.includes('improve') || titleLower.includes('enhance')) return '🎯';
+            if (titleLower.includes('efficiency') || titleLower.includes('performance') || titleLower.includes('speed')) return '⚡';
+            if (titleLower.includes('cost') || titleLower.includes('budget') || titleLower.includes('expense')) return '💸';
+            if (titleLower.includes('quality') || titleLower.includes('testing') || titleLower.includes('validation')) return '✅';
+            
+            // Financial & Accounting
+            if (titleLower.includes('financial') || titleLower.includes('finance') || titleLower.includes('accounting')) return '💵';
+            if (titleLower.includes('payment') || titleLower.includes('billing') || titleLower.includes('invoice')) return '💳';
+            if (titleLower.includes('pricing') || titleLower.includes('revenue') || titleLower.includes('profit')) return '💰';
+            
+            // HR & Employee Management
+            if (titleLower.includes('hr') || titleLower.includes('employee') || titleLower.includes('staff')) return '👥';
+            if (titleLower.includes('recruitment') || titleLower.includes('hiring') || titleLower.includes('talent')) return '🎯';
+            if (titleLower.includes('training') || titleLower.includes('learning') || titleLower.includes('development')) return '📚';
+            
+            // Healthcare & Medical
+            if (titleLower.includes('health') || titleLower.includes('medical') || titleLower.includes('patient')) return '🏥';
+            if (titleLower.includes('diagnosis') || titleLower.includes('symptom') || titleLower.includes('treatment')) return '🩺';
+            if (titleLower.includes('drug') || titleLower.includes('medicine') || titleLower.includes('pharmaceutical')) return '💊';
+            
+            // Education & Training
+            if (titleLower.includes('education') || titleLower.includes('learning') || titleLower.includes('course')) return '📚';
+            if (titleLower.includes('student') || titleLower.includes('teacher') || titleLower.includes('academic')) return '🎓';
+            if (titleLower.includes('quiz') || titleLower.includes('test') || titleLower.includes('assessment')) return '📝';
+            
+            // IoT & Smart Systems
+            if (titleLower.includes('iot') || titleLower.includes('sensor') || titleLower.includes('smart')) return '🌐';
+            if (titleLower.includes('device') || titleLower.includes('connected') || titleLower.includes('remote')) return '📡';
+            if (titleLower.includes('monitoring') || titleLower.includes('tracking') || titleLower.includes('surveillance')) return '👁️';
+            
+            // General Technology
+            if (titleLower.includes('api') || titleLower.includes('integration') || titleLower.includes('connect')) return '🔗';
+            if (titleLower.includes('cloud') || titleLower.includes('server') || titleLower.includes('infrastructure')) return '☁️';
+            if (titleLower.includes('mobile') || titleLower.includes('app') || titleLower.includes('application')) return '📱';
+            if (titleLower.includes('web') || titleLower.includes('website') || titleLower.includes('portal')) return '🌐';
+            
+            return '🚀'; // Default rocket icon for AI implementation
         }
         
-        // Get opportunity category based on title
+        // Enhanced category classification with more precise matching
         function getOpportunityCategory(title) {
             const titleLower = title.toLowerCase();
-            if (titleLower.includes('chatbot') || titleLower.includes('chat')) return 'Customer Service';
-            if (titleLower.includes('automation') || titleLower.includes('workflow')) return 'Process Automation';
-            if (titleLower.includes('analytics') || titleLower.includes('data')) return 'Data Analytics';
-            if (titleLower.includes('personalization') || titleLower.includes('recommendation')) return 'Personalization';
-            if (titleLower.includes('fraud') || titleLower.includes('security')) return 'Security';
-            if (titleLower.includes('inventory') || titleLower.includes('supply')) return 'Operations';
-            if (titleLower.includes('marketing') || titleLower.includes('content')) return 'Marketing';
-            if (titleLower.includes('support') || titleLower.includes('service')) return 'Support';
-            if (titleLower.includes('prediction') || titleLower.includes('forecast')) return 'Forecasting';
-            if (titleLower.includes('optimization') || titleLower.includes('improve')) return 'Optimization';
+            
+            // Customer Service & Communication
+            if (titleLower.includes('chatbot') || titleLower.includes('chat') || titleLower.includes('assistant')) return 'Customer Service';
+            if (titleLower.includes('support') || titleLower.includes('help') || titleLower.includes('ticket')) return 'Customer Support';
+            if (titleLower.includes('voice') || titleLower.includes('speech') || titleLower.includes('audio')) return 'Voice Technology';
+            if (titleLower.includes('email') || titleLower.includes('message') || titleLower.includes('notification')) return 'Communication';
+            
+            // Automation & Workflow
+            if (titleLower.includes('automation') || titleLower.includes('workflow') || titleLower.includes('process')) return 'Process Automation';
+            if (titleLower.includes('robot') || titleLower.includes('rpa') || titleLower.includes('robotic')) return 'Robotic Process Automation';
+            if (titleLower.includes('scheduling') || titleLower.includes('calendar') || titleLower.includes('time')) return 'Scheduling & Time Management';
+            if (titleLower.includes('pipeline') || titleLower.includes('cicd') || titleLower.includes('deploy')) return 'DevOps & Deployment';
+            
+            // Data & Analytics
+            if (titleLower.includes('analytics') || titleLower.includes('data') || titleLower.includes('insight')) return 'Data Analytics';
+            if (titleLower.includes('dashboard') || titleLower.includes('reporting') || titleLower.includes('report')) return 'Business Intelligence';
+            if (titleLower.includes('visualization') || titleLower.includes('chart') || titleLower.includes('graph')) return 'Data Visualization';
+            if (titleLower.includes('mining') || titleLower.includes('etl') || titleLower.includes('warehouse')) return 'Data Engineering';
+            if (titleLower.includes('business intelligence') || titleLower.includes('bi') || titleLower.includes('kpi')) return 'Business Intelligence';
+            
+            // Machine Learning & AI
+            if (titleLower.includes('machine learning') || titleLower.includes('ml') || titleLower.includes('model')) return 'Machine Learning';
+            if (titleLower.includes('neural') || titleLower.includes('deep learning') || titleLower.includes('ai')) return 'Artificial Intelligence';
+            if (titleLower.includes('computer vision') || titleLower.includes('image') || titleLower.includes('visual')) return 'Computer Vision';
+            if (titleLower.includes('nlp') || titleLower.includes('natural language') || titleLower.includes('text')) return 'Natural Language Processing';
+            
+            // Personalization & Recommendations
+            if (titleLower.includes('personalization') || titleLower.includes('recommendation') || titleLower.includes('suggest')) return 'Personalization';
+            if (titleLower.includes('targeting') || titleLower.includes('segment') || titleLower.includes('profile')) return 'Customer Segmentation';
+            if (titleLower.includes('preference') || titleLower.includes('taste') || titleLower.includes('like')) return 'User Experience';
+            
+            // Security & Fraud
+            if (titleLower.includes('fraud') || titleLower.includes('security') || titleLower.includes('detect')) return 'Security & Fraud Detection';
+            if (titleLower.includes('anomaly') || titleLower.includes('unusual') || titleLower.includes('suspicious')) return 'Anomaly Detection';
+            if (titleLower.includes('threat') || titleLower.includes('risk') || titleLower.includes('vulnerability')) return 'Risk Management';
+            if (titleLower.includes('compliance') || titleLower.includes('audit') || titleLower.includes('regulation')) return 'Compliance & Audit';
+            
+            // Operations & Supply Chain
+            if (titleLower.includes('inventory') || titleLower.includes('supply') || titleLower.includes('stock')) return 'Inventory Management';
+            if (titleLower.includes('logistics') || titleLower.includes('shipping') || titleLower.includes('delivery')) return 'Logistics & Delivery';
+            if (titleLower.includes('procurement') || titleLower.includes('purchasing') || titleLower.includes('vendor')) return 'Procurement';
+            if (titleLower.includes('manufacturing') || titleLower.includes('production') || titleLower.includes('factory')) return 'Manufacturing';
+            
+            // Marketing & Sales
+            if (titleLower.includes('marketing') || titleLower.includes('campaign') || titleLower.includes('promotion')) return 'Marketing & Campaigns';
+            if (titleLower.includes('content') || titleLower.includes('blog') || titleLower.includes('article')) return 'Content Marketing';
+            if (titleLower.includes('social') || titleLower.includes('media') || titleLower.includes('influence')) return 'Social Media';
+            if (titleLower.includes('sales') || titleLower.includes('lead') || titleLower.includes('conversion')) return 'Sales & Lead Generation';
+            if (titleLower.includes('seo') || titleLower.includes('search') || titleLower.includes('ranking')) return 'SEO & Search';
+            
+            // Prediction & Forecasting
+            if (titleLower.includes('prediction') || titleLower.includes('forecast') || titleLower.includes('predict')) return 'Predictive Analytics';
+            if (titleLower.includes('trend') || titleLower.includes('pattern') || titleLower.includes('seasonal')) return 'Trend Analysis';
+            if (titleLower.includes('demand') || titleLower.includes('planning') || titleLower.includes('capacity')) return 'Demand Planning';
+            
+            // Optimization & Performance
+            if (titleLower.includes('optimization') || titleLower.includes('improve') || titleLower.includes('enhance')) return 'Optimization';
+            if (titleLower.includes('efficiency') || titleLower.includes('performance') || titleLower.includes('speed')) return 'Performance Enhancement';
+            if (titleLower.includes('cost') || titleLower.includes('budget') || titleLower.includes('expense')) return 'Cost Management';
+            if (titleLower.includes('quality') || titleLower.includes('testing') || titleLower.includes('validation')) return 'Quality Assurance';
+            
+            // Financial & Accounting
+            if (titleLower.includes('financial') || titleLower.includes('finance') || titleLower.includes('accounting')) return 'Financial Management';
+            if (titleLower.includes('payment') || titleLower.includes('billing') || titleLower.includes('invoice')) return 'Payment Processing';
+            if (titleLower.includes('pricing') || titleLower.includes('revenue') || titleLower.includes('profit')) return 'Revenue Management';
+            
+            // HR & Employee Management
+            if (titleLower.includes('hr') || titleLower.includes('employee') || titleLower.includes('staff')) return 'Human Resources';
+            if (titleLower.includes('recruitment') || titleLower.includes('hiring') || titleLower.includes('talent')) return 'Talent Acquisition';
+            if (titleLower.includes('training') || titleLower.includes('learning') || titleLower.includes('development')) return 'Learning & Development';
+            
+            // Healthcare & Medical
+            if (titleLower.includes('health') || titleLower.includes('medical') || titleLower.includes('patient')) return 'Healthcare';
+            if (titleLower.includes('diagnosis') || titleLower.includes('symptom') || titleLower.includes('treatment')) return 'Medical Diagnosis';
+            if (titleLower.includes('drug') || titleLower.includes('medicine') || titleLower.includes('pharmaceutical')) return 'Pharmaceutical';
+            
+            // Education & Training
+            if (titleLower.includes('education') || titleLower.includes('learning') || titleLower.includes('course')) return 'Education & Training';
+            if (titleLower.includes('student') || titleLower.includes('teacher') || titleLower.includes('academic')) return 'Academic Management';
+            if (titleLower.includes('quiz') || titleLower.includes('test') || titleLower.includes('assessment')) return 'Assessment & Testing';
+            
+            // IoT & Smart Systems
+            if (titleLower.includes('iot') || titleLower.includes('sensor') || titleLower.includes('smart')) return 'IoT & Smart Systems';
+            if (titleLower.includes('device') || titleLower.includes('connected') || titleLower.includes('remote')) return 'Connected Devices';
+            if (titleLower.includes('monitoring') || titleLower.includes('tracking') || titleLower.includes('surveillance')) return 'Monitoring & Tracking';
+            
+            // General Technology
+            if (titleLower.includes('api') || titleLower.includes('integration') || titleLower.includes('connect')) return 'System Integration';
+            if (titleLower.includes('cloud') || titleLower.includes('server') || titleLower.includes('infrastructure')) return 'Cloud Infrastructure';
+            if (titleLower.includes('mobile') || titleLower.includes('app') || titleLower.includes('application')) return 'Mobile Development';
+            if (titleLower.includes('web') || titleLower.includes('website') || titleLower.includes('portal')) return 'Web Development';
+            
             return 'AI Implementation';
         }
         
