@@ -288,6 +288,409 @@
             100% { transform: rotate(360deg); }
         }
 
+        /* Skeleton Loading Animations */
+        .skeleton-container {
+            background: var(--white);
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            margin-top: 20px;
+            display: none;
+            border: 1px solid rgba(230, 224, 248, 0.3);
+        }
+
+        .skeleton-card {
+            background: var(--light-gray);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .skeleton-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .skeleton-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .skeleton-title {
+            height: 24px;
+            background: rgba(107, 91, 149, 0.1);
+            border-radius: 4px;
+            width: 60%;
+        }
+
+        .skeleton-priority {
+            height: 20px;
+            background: rgba(107, 91, 149, 0.1);
+            border-radius: 20px;
+            width: 80px;
+        }
+
+        .skeleton-description {
+            height: 16px;
+            background: rgba(107, 91, 149, 0.1);
+            border-radius: 4px;
+            margin-bottom: 8px;
+        }
+
+        .skeleton-description:last-child {
+            width: 75%;
+        }
+
+        .skeleton-metrics {
+            display: flex;
+            gap: 20px;
+            margin-top: 16px;
+        }
+
+        .skeleton-metric {
+            height: 20px;
+            background: rgba(107, 91, 149, 0.1);
+            border-radius: 20px;
+            width: 100px;
+        }
+
+        /* Enhanced Progress Bars */
+        .progress-container {
+            margin-top: 20px;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--soft-lavender) 0%, var(--muted-pink) 100%);
+            border-radius: 12px;
+            border: 1px solid rgba(230, 224, 248, 0.5);
+        }
+
+        .progress-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .progress-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .progress-label {
+            font-weight: 600;
+            color: var(--deep-purple);
+            font-size: var(--font-size-small);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .progress-bar {
+            flex: 1;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+            margin: 0 15px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 1s ease-in-out;
+            position: relative;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: progress-shine 2s infinite;
+        }
+
+        @keyframes progress-shine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .progress-fill.high {
+            background: linear-gradient(90deg, var(--error-red), #ff6b6b);
+        }
+
+        .progress-fill.medium {
+            background: linear-gradient(90deg, var(--warning-orange), #ffb74d);
+        }
+
+        .progress-fill.low {
+            background: linear-gradient(90deg, var(--success-green), #81c784);
+        }
+
+        .progress-value {
+            font-weight: 600;
+            color: var(--deep-purple);
+            font-size: var(--font-size-small);
+            min-width: 60px;
+            text-align: right;
+        }
+
+        /* Enhanced Opportunity Cards */
+        .opportunity-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--soft-lavender) 0%, var(--muted-pink) 100%);
+            border-radius: 12px;
+            margin-right: 16px;
+            font-size: 24px;
+            color: var(--deep-purple);
+            font-weight: 600;
+            border: 2px solid rgba(230, 224, 248, 0.5);
+        }
+
+        .opportunity-header-enhanced {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .opportunity-header-content {
+            flex: 1;
+        }
+
+        .opportunity-title-enhanced {
+            font-size: var(--font-size-card);
+            font-weight: 600;
+            color: var(--deep-purple);
+            margin: 0 0 8px 0;
+            line-height: 1.3;
+        }
+
+        .opportunity-category {
+            font-size: var(--font-size-small);
+            color: var(--medium-gray);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .opportunity-priority-enhanced {
+            background: linear-gradient(135deg, var(--deep-purple) 0%, #8B7AB8 100%);
+            color: var(--white);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: var(--font-size-small);
+            font-weight: 600;
+            margin-left: 16px;
+            box-shadow: 0 2px 8px rgba(107, 91, 149, 0.3);
+        }
+
+        /* Staggered Animation for Cards */
+        .opportunity-card-enter {
+            animation: cardFadeIn 0.6s ease-out forwards;
+        }
+
+        @keyframes cardFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Enhanced Input Animations */
+        .input-field:focus {
+            outline: none;
+            border-color: var(--deep-purple);
+            box-shadow: 0 0 0 3px rgba(107, 91, 149, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .input-field:focus + .floating-label,
+        .input-field:not(:placeholder-shown) + .floating-label {
+            transform: translateY(-12px) scale(0.8);
+            color: var(--deep-purple);
+        }
+
+        .floating-label {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            color: var(--medium-gray);
+            font-size: var(--font-size-body);
+            pointer-events: none;
+            transition: all 0.3s ease;
+            background: var(--white);
+            padding: 0 4px;
+        }
+
+        .input-container {
+            position: relative;
+        }
+
+        /* Button Enhancements */
+        .submit-btn:hover:not(:disabled) {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(107, 91, 149, 0.4);
+        }
+
+        .submit-btn:active:not(:disabled) {
+            transform: translateY(-1px) scale(0.98);
+            box-shadow: 0 4px 15px rgba(107, 91, 149, 0.3);
+        }
+
+        .download-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
+        }
+
+        .download-btn:active {
+            transform: translateY(-1px) scale(0.95);
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        /* Character Counter */
+        .character-counter {
+            position: absolute;
+            bottom: 8px;
+            right: 12px;
+            font-size: var(--font-size-small);
+            color: var(--medium-gray);
+            font-weight: 500;
+            transition: var(--transition-smooth);
+        }
+
+        .character-counter.valid {
+            color: var(--success-green);
+        }
+
+        .character-counter.invalid {
+            color: var(--error-red);
+        }
+
+        /* Provider Selection Enhancements */
+        .provider-option:active {
+            transform: translateY(-1px) scale(0.98);
+        }
+
+        .provider-option input[type="radio"] {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--deep-purple);
+            border-radius: 50%;
+            margin-right: 8px;
+            position: relative;
+            transition: var(--transition-smooth);
+        }
+
+        .provider-option input[type="radio"]:checked::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 8px;
+            height: 8px;
+            background: var(--deep-purple);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            animation: radioCheck 0.3s ease-out;
+        }
+
+        @keyframes radioCheck {
+            0% {
+                transform: translate(-50%, -50%) scale(0);
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+
+        /* File Upload Enhancements */
+        .file-upload-label.drag-over {
+            border-color: var(--deep-purple);
+            background: var(--soft-lavender);
+            transform: scale(1.02);
+        }
+
+        /* Model Select Enhancements */
+        .model-select:hover {
+            border-color: var(--deep-purple);
+            transform: translateY(-1px);
+        }
+
+        /* Error Message Enhancement */
+        .error-message {
+            animation: errorSlide 0.3s ease-out;
+        }
+
+        @keyframes errorSlide {
+            0% {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Success Animation */
+        .success-checkmark {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            background: var(--success-green);
+            border-radius: 50%;
+            position: relative;
+            margin-right: 8px;
+            animation: checkmarkBounce 0.6s ease-out;
+        }
+
+        .success-checkmark::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        @keyframes checkmarkBounce {
+            0% {
+                transform: scale(0);
+            }
+            50% {
+                transform: scale(1.2);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
         .error-message {
             background: var(--error-red);
             color: var(--white);
@@ -431,18 +834,73 @@
             color: var(--white);
         }
 
+        /* Tablet Design (768px - 1024px) */
+        @media (max-width: 1024px) and (min-width: 769px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 2.5em;
+            }
+            
+            .form-container {
+                padding: 32px;
+            }
+            
+            .provider-selection {
+                gap: 15px;
+            }
+            
+            .opportunity-header-enhanced {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+            
+            .opportunity-priority-enhanced {
+                margin-left: 0;
+                align-self: flex-start;
+            }
+            
+            .progress-container {
+                padding: 16px;
+            }
+        }
+
+        /* Mobile Design (< 768px) */
         @media (max-width: 768px) {
             .container {
                 padding: 10px;
             }
             
+            .header {
+                padding: 30px 20px;
+                margin-bottom: 20px;
+            }
+            
             .header h1 {
                 font-size: 2em;
+                margin-bottom: 10px;
+            }
+            
+            .header p {
+                font-size: 1em;
+            }
+            
+            .form-container {
+                padding: 24px;
+                margin-bottom: 15px;
             }
             
             .provider-selection {
                 flex-direction: column;
-                gap: 10px;
+                gap: 12px;
+            }
+            
+            .provider-option {
+                justify-content: center;
+                padding: 16px;
             }
             
             .results-header {
@@ -451,14 +909,118 @@
                 align-items: stretch;
             }
             
-            .opportunity-header {
-                flex-direction: column;
-                gap: 10px;
+            .results-title {
+                font-size: 1.5em;
+                text-align: center;
             }
             
-            .opportunity-metrics {
-                flex-wrap: wrap;
-                gap: 10px;
+            .opportunity-header-enhanced {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+            
+            .opportunity-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 20px;
+                margin-right: 0;
+                margin-bottom: 8px;
+            }
+            
+            .opportunity-priority-enhanced {
+                margin-left: 0;
+                align-self: flex-start;
+            }
+            
+            .progress-container {
+                padding: 16px;
+            }
+            
+            .progress-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+                margin-bottom: 20px;
+            }
+            
+            .progress-bar {
+                margin: 0;
+                width: 100%;
+            }
+            
+            .progress-value {
+                align-self: flex-end;
+                min-width: auto;
+            }
+            
+            .skeleton-container {
+                padding: 24px;
+            }
+            
+            .submit-btn {
+                padding: 16px;
+                font-size: 1em;
+            }
+            
+            .download-btn {
+                width: 100%;
+                padding: 16px;
+                font-size: 1em;
+            }
+            
+            .character-counter {
+                position: static;
+                text-align: right;
+                margin-top: 8px;
+            }
+            
+            .input-container {
+                position: relative;
+            }
+            
+            .file-upload-label {
+                padding: 16px;
+                font-size: 0.9em;
+            }
+        }
+
+        /* Small Mobile (< 480px) */
+        @media (max-width: 480px) {
+            .container {
+                padding: 8px;
+            }
+            
+            .header {
+                padding: 20px 15px;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .form-container {
+                padding: 20px;
+            }
+            
+            .opportunity {
+                padding: 20px;
+            }
+            
+            .opportunity-title-enhanced {
+                font-size: 1.2em;
+            }
+            
+            .opportunity-description {
+                font-size: 0.9em;
+            }
+            
+            .progress-label {
+                font-size: 0.8em;
+            }
+            
+            .progress-value {
+                font-size: 0.8em;
             }
         }
     </style>
@@ -502,12 +1064,17 @@
 
                 <div class="form-group">
                     <label for="apiKey" id="apiKeyLabel">OpenAI API Key</label>
-                    <input type="password" class="input-field" id="apiKey" name="apiKey" placeholder="Enter your API key" required autocomplete="off" data-form-type="other">
+                    <div class="input-container">
+                        <input type="password" class="input-field" id="apiKey" name="apiKey" placeholder="Enter your API key" required autocomplete="off" data-form-type="other">
+                    </div>
                 </div>
 
                 <div class="form-group">
                     <label for="companyDescription">Company Description</label>
-                    <textarea class="input-field textarea-field" id="companyDescription" name="companyDescription" placeholder="Describe your company, its products, services, and current operations (minimum 100 characters)" required minlength="100"></textarea>
+                    <div class="input-container">
+                        <textarea class="input-field textarea-field" id="companyDescription" name="companyDescription" placeholder="Describe your company, its products, services, and current operations (minimum 100 characters)" required minlength="100"></textarea>
+                        <div class="character-counter" id="charCounter">0/100 characters</div>
+                    </div>
                 </div>
 
                 <div class="form-group">
@@ -524,6 +1091,51 @@
                     Analyze Business Opportunities
                 </button>
             </form>
+        </div>
+
+        <div class="skeleton-container" id="skeletonContainer">
+            <div class="results-header">
+                <h2 class="results-title">Analyzing Your Business...</h2>
+            </div>
+            <div class="skeleton-card">
+                <div class="skeleton-header">
+                    <div class="skeleton-title"></div>
+                    <div class="skeleton-priority"></div>
+                </div>
+                <div class="skeleton-description"></div>
+                <div class="skeleton-description"></div>
+                <div class="skeleton-description"></div>
+                <div class="skeleton-metrics">
+                    <div class="skeleton-metric"></div>
+                    <div class="skeleton-metric"></div>
+                </div>
+            </div>
+            <div class="skeleton-card">
+                <div class="skeleton-header">
+                    <div class="skeleton-title"></div>
+                    <div class="skeleton-priority"></div>
+                </div>
+                <div class="skeleton-description"></div>
+                <div class="skeleton-description"></div>
+                <div class="skeleton-description"></div>
+                <div class="skeleton-metrics">
+                    <div class="skeleton-metric"></div>
+                    <div class="skeleton-metric"></div>
+                </div>
+            </div>
+            <div class="skeleton-card">
+                <div class="skeleton-header">
+                    <div class="skeleton-title"></div>
+                    <div class="skeleton-priority"></div>
+                </div>
+                <div class="skeleton-description"></div>
+                <div class="skeleton-description"></div>
+                <div class="skeleton-description"></div>
+                <div class="skeleton-metrics">
+                    <div class="skeleton-metric"></div>
+                    <div class="skeleton-metric"></div>
+                </div>
+            </div>
         </div>
 
         <div class="results-container" id="resultsContainer">
@@ -585,34 +1197,86 @@
             modelInfo.textContent = modelDescriptions[currentProvider][modelTier];
         }
 
-        // File upload handling
-        document.getElementById('companyFile').addEventListener('change', function(e) {
-            const fileLabel = document.getElementById('fileLabel');
-            const file = e.target.files[0];
+        // Character counter functionality
+        document.getElementById('companyDescription').addEventListener('input', function(e) {
+            const charCounter = document.getElementById('charCounter');
+            const currentLength = e.target.value.length;
+            const minLength = 100;
             
-            if (file) {
-                // Check file size (5MB limit)
-                if (file.size > 5 * 1024 * 1024) {
-                    showError('File size must be less than 5MB');
-                    e.target.value = '';
-                    return;
-                }
-                
-                // Check file type
-                const allowedTypes = ['text/plain', 'application/pdf'];
-                if (!allowedTypes.includes(file.type)) {
-                    showError('Only .txt and .pdf files are allowed');
-                    e.target.value = '';
-                    return;
-                }
-                
-                fileLabel.textContent = `Selected: ${file.name}`;
-                fileLabel.classList.add('has-file');
+            charCounter.textContent = `${currentLength}/${minLength} characters`;
+            
+            if (currentLength >= minLength) {
+                charCounter.classList.add('valid');
+                charCounter.classList.remove('invalid');
             } else {
-                fileLabel.textContent = 'Click to upload a company document (.txt, .pdf, max 5MB)';
-                fileLabel.classList.remove('has-file');
+                charCounter.classList.add('invalid');
+                charCounter.classList.remove('valid');
             }
         });
+
+        // File upload handling with drag and drop
+        const fileUploadLabel = document.getElementById('fileLabel');
+        const fileInput = document.getElementById('companyFile');
+        
+        // Drag and drop functionality
+        fileUploadLabel.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            fileUploadLabel.classList.add('drag-over');
+        });
+        
+        fileUploadLabel.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            fileUploadLabel.classList.remove('drag-over');
+        });
+        
+        fileUploadLabel.addEventListener('drop', function(e) {
+            e.preventDefault();
+            fileUploadLabel.classList.remove('drag-over');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFileSelection(files[0]);
+            }
+        });
+        
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                handleFileSelection(file);
+            } else {
+                resetFileUpload();
+            }
+        });
+        
+        function handleFileSelection(file) {
+            // Check file size (5MB limit)
+            if (file.size > 5 * 1024 * 1024) {
+                showError('File size must be less than 5MB');
+                resetFileUpload();
+                return;
+            }
+            
+            // Check file type
+            const allowedTypes = ['text/plain', 'application/pdf'];
+            if (!allowedTypes.includes(file.type)) {
+                showError('Only .txt and .pdf files are allowed');
+                resetFileUpload();
+                return;
+            }
+            
+            // Show success with animation
+            fileUploadLabel.innerHTML = `
+                <div class="success-checkmark"></div>
+                Selected: ${file.name}
+            `;
+            fileUploadLabel.classList.add('has-file');
+        }
+        
+        function resetFileUpload() {
+            fileUploadLabel.textContent = 'Click to upload a company document (.txt, .pdf, max 5MB)';
+            fileUploadLabel.classList.remove('has-file');
+            fileInput.value = '';
+        }
 
         // Form submission
         document.getElementById('analysisForm').addEventListener('submit', async function(e) {
@@ -630,6 +1294,13 @@
             const submitBtn = document.getElementById('submitBtn');
             submitBtn.classList.add('loading');
             submitBtn.disabled = true;
+            
+            // Show skeleton loading
+            const skeletonContainer = document.getElementById('skeletonContainer');
+            const resultsContainer = document.getElementById('resultsContainer');
+            resultsContainer.style.display = 'none';
+            skeletonContainer.style.display = 'block';
+            skeletonContainer.scrollIntoView({ behavior: 'smooth' });
             
             try {
                 // Prepare form data
@@ -666,6 +1337,10 @@
                 // Reset loading state
                 submitBtn.classList.remove('loading');
                 submitBtn.disabled = false;
+                
+                // Hide skeleton loading
+                const skeletonContainer = document.getElementById('skeletonContainer');
+                skeletonContainer.style.display = 'none';
             }
         });
 
@@ -712,28 +1387,46 @@
             // Clear previous results
             opportunitiesContainer.innerHTML = '';
             
-            // Display opportunities
-            data.opportunities.forEach(opportunity => {
+            // Display opportunities with staggered animation
+            data.opportunities.forEach((opportunity, index) => {
                 const opportunityDiv = document.createElement('div');
                 opportunityDiv.className = 'opportunity';
                 
+                // Get opportunity icon based on category or default
+                const opportunityIcon = getOpportunityIcon(opportunity.title);
+                const opportunityCategory = getOpportunityCategory(opportunity.title);
+                
                 opportunityDiv.innerHTML = `
-                    <div class="opportunity-header">
-                        <h3 class="opportunity-title">${opportunity.title}</h3>
-                        <div class="opportunity-priority">Priority: ${opportunity.priority}</div>
+                    <div class="opportunity-header-enhanced">
+                        <div class="opportunity-icon">${opportunityIcon}</div>
+                        <div class="opportunity-header-content">
+                            <h3 class="opportunity-title-enhanced">${opportunity.title}</h3>
+                            <div class="opportunity-category">${opportunityCategory}</div>
+                        </div>
+                        <div class="opportunity-priority-enhanced">Priority: ${opportunity.priority}</div>
                     </div>
                     <div class="opportunity-description">${opportunity.description}</div>
-                    <div class="opportunity-metrics">
-                        <div class="metric">
-                            <span class="metric-label">Impact:</span>
-                            <span class="metric-value metric-${opportunity.impact.toLowerCase()}">${opportunity.impact}</span>
+                    <div class="progress-container">
+                        <div class="progress-item">
+                            <div class="progress-label">Impact</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill ${opportunity.impact.toLowerCase()}" style="width: ${getProgressWidth(opportunity.impact)}%"></div>
+                            </div>
+                            <div class="progress-value">${opportunity.impact}</div>
                         </div>
-                        <div class="metric">
-                            <span class="metric-label">Effort:</span>
-                            <span class="metric-value metric-${opportunity.effort.toLowerCase()}">${opportunity.effort}</span>
+                        <div class="progress-item">
+                            <div class="progress-label">Effort</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill ${opportunity.effort.toLowerCase()}" style="width: ${getProgressWidth(opportunity.effort)}%"></div>
+                            </div>
+                            <div class="progress-value">${opportunity.effort}</div>
                         </div>
                     </div>
                 `;
+                
+                // Add staggered animation
+                opportunityDiv.style.animationDelay = `${index * 0.1}s`;
+                opportunityDiv.classList.add('opportunity-card-enter');
                 
                 opportunitiesContainer.appendChild(opportunityDiv);
             });
@@ -741,6 +1434,48 @@
             // Show results container
             resultsContainer.style.display = 'block';
             resultsContainer.scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // Get opportunity icon based on title keywords
+        function getOpportunityIcon(title) {
+            const titleLower = title.toLowerCase();
+            if (titleLower.includes('chatbot') || titleLower.includes('chat')) return '💬';
+            if (titleLower.includes('automation') || titleLower.includes('workflow')) return '⚙️';
+            if (titleLower.includes('analytics') || titleLower.includes('data')) return '📊';
+            if (titleLower.includes('personalization') || titleLower.includes('recommendation')) return '👤';
+            if (titleLower.includes('fraud') || titleLower.includes('security')) return '🔒';
+            if (titleLower.includes('inventory') || titleLower.includes('supply')) return '📦';
+            if (titleLower.includes('marketing') || titleLower.includes('content')) return '📈';
+            if (titleLower.includes('support') || titleLower.includes('service')) return '🎧';
+            if (titleLower.includes('prediction') || titleLower.includes('forecast')) return '🔮';
+            if (titleLower.includes('optimization') || titleLower.includes('improve')) return '🎯';
+            return '🚀'; // Default icon
+        }
+        
+        // Get opportunity category based on title
+        function getOpportunityCategory(title) {
+            const titleLower = title.toLowerCase();
+            if (titleLower.includes('chatbot') || titleLower.includes('chat')) return 'Customer Service';
+            if (titleLower.includes('automation') || titleLower.includes('workflow')) return 'Process Automation';
+            if (titleLower.includes('analytics') || titleLower.includes('data')) return 'Data Analytics';
+            if (titleLower.includes('personalization') || titleLower.includes('recommendation')) return 'Personalization';
+            if (titleLower.includes('fraud') || titleLower.includes('security')) return 'Security';
+            if (titleLower.includes('inventory') || titleLower.includes('supply')) return 'Operations';
+            if (titleLower.includes('marketing') || titleLower.includes('content')) return 'Marketing';
+            if (titleLower.includes('support') || titleLower.includes('service')) return 'Support';
+            if (titleLower.includes('prediction') || titleLower.includes('forecast')) return 'Forecasting';
+            if (titleLower.includes('optimization') || titleLower.includes('improve')) return 'Optimization';
+            return 'AI Implementation';
+        }
+        
+        // Get progress bar width based on impact/effort level
+        function getProgressWidth(level) {
+            switch(level.toLowerCase()) {
+                case 'high': return 85;
+                case 'medium': return 60;
+                case 'low': return 35;
+                default: return 50;
+            }
         }
 
         // PDF download
